@@ -11,6 +11,7 @@
 
 #import <objc/runtime.h>
 
+//注入对象作用范围
 typedef NS_ENUM(NSInteger, MDLIOCScope) {
     MDLIOCScopeNormal,  //正常的作用范围，每次使用时都重新创建
     MDLIOCScopeModule,  //模块作用范围，跟模块的生命周期相关
@@ -22,11 +23,6 @@ typedef NS_ENUM(NSInteger, MDLIOCScope) {
 + (NSSet *)mdlioc_injectableProperties;
 
 @end
-
-#define objection_requires(args...) \
-+ (NSSet *)mdlioc_injectableProperties { \
-return BuildDependenciesForClass(self, [NSSet setWithObjects: args, nil]); \
-}
 
 //获取该类需要进行依赖注入的属性名称
 static NSSet * BuildDependenciesForClass(Class clazz, NSSet *requirements) {
@@ -43,6 +39,11 @@ static NSSet * BuildDependenciesForClass(Class clazz, NSSet *requirements) {
 //协议对象生成Key
 static NSString * ProtocolKeyForProtocol(Protocol *aProtocol) {
     return [NSString stringWithFormat:@"<%@>",NSStringFromProtocol(aProtocol)];
+}
+
+#define mdlioc_requires(args...) \
++ (NSSet *)mdlioc_injectableProperties { \
+return BuildDependenciesForClass(self, [NSSet setWithObjects: args, nil]); \
 }
 
 #endif /* MDLIOC_h */

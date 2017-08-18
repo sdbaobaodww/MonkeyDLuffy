@@ -7,6 +7,7 @@
 //
 
 #import "AppDelegate.h"
+#import "MDLIOCContext.h"
 
 @interface AppDelegate ()
 
@@ -16,7 +17,12 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    // Override point for customization after application launch.
+    MDLIOCContext *context = [[MDLIOCContext alloc] init];
+    
+    context[@"key"] = @"aaaa";
+    
+    NSString *a = context[@"key"];
+    
     return YES;
 }
 

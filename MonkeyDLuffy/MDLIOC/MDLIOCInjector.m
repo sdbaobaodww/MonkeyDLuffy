@@ -7,8 +7,8 @@
 //
 
 #import "MDLIOCInjector.h"
-#import "MDLIOCProvider.h"
 #import <objc/runtime.h>
+#import "MDLIOCContext.h"
 
 @implementation NSObject (MDLIOCInjector)
 
@@ -23,9 +23,7 @@
 @end
 
 @implementation MDLIOCInjector {
-    NSMutableDictionary<NSString *, id> *_moduleContext;
-    NSMutableDictionary<NSString *, id> *_globalContext;
-    NSMutableDictionary<NSString *, MDLIOCBean *> *_allBeans;
+    MDLIOCContext *_iocContext;
     
     NSMutableDictionary<NSString *, NSNumber *> *_moduleLifeCycle;
     NSMutableDictionary<NSString *, NSMutableArray<NSString *> *> *_procotolsOfModule;
@@ -44,9 +42,7 @@
 
 -(instancetype)init {
     if (self = [super init]) {
-        _moduleContext = [[NSMutableDictionary<NSString *, id> alloc] init];
-        _globalContext = [[NSMutableDictionary<NSString *, id> alloc] init];
-        _allBeans = [[NSMutableDictionary<NSString *, MDLIOCBean *> alloc] init];
+        _iocContext = [[MDLIOCContext alloc] init];
         
         _moduleLifeCycle = [[NSMutableDictionary<NSString *, NSNumber *> alloc] init];
         _procotolsOfModule = [[NSMutableDictionary<NSString *, NSMutableArray<NSString *> *> alloc] init];
@@ -56,74 +52,46 @@
     return self;
 }
 
+- (NSDictionary *)cachesWithScope:(MDLIOCScope)scope {
+    return [_iocContext cachesWithScope:scope];
+}
+
+- (NSDictionary *)allBeans {
+    return [_iocContext allBeans];
+}
+
+#pragma mark - 获取已注册的依赖对象
+
 - (id)instanceForProtocol:(Protocol *)protocol {
-    return [self _instanceForProtocolKey:ProtocolKeyForProtocol(protocol)];
+    return [_iocContext instanceForKey:ProtocolKeyForProtocol(protocol)];
 }
 
 - (id)_instanceForProtocolKey:(NSString *)protocolKey {
-    MDLIOCBean *bean = [_allBeans objectForKey:protocolKey];
-    if (bean) {
-        switch (bean.scope) {
-            case MDLIOCScopeGlobal:
-                return _globalContext[protocolKey];
-            case MDLIOCScopeModule:
-                return _moduleContext[protocolKey];
-            default:
-                return [[bean.bindClass alloc] init];
-        }
-    }
-    return nil;
+    return [_iocContext instanceForKey:protocolKey];
 }
 
-#pragma mark - 对象注入
+#pragma mark - 注册依赖对象
 
 - (void)loadIOCInstanceFromProviders:(NSArray<NSString *> *)providerClassNames {
     for (NSString *providerClassName in providerClassNames) {
         Class<MDLIOCProvider> provider= NSClassFromString(providerClassName);//IOC注入对象提供类
         NSString *moduleName = [provider moduleName];//模块名称        
         for (MDLIOCBean *bean in [provider buildBeans]) {
-            switch (bean.scope) {
-                case MDLIOCScopeGlobal:
-                    [self registerGlobalClass:bean.bindClass forProtocol:bean.protocol];
-                    break;
-                case MDLIOCScopeModule:
-                    [self registerModuleClass:bean.bindClass forProtocol:bean.protocol moduleName:moduleName];
-                    break;
-                default:
-                    [self registerNormalClass:bean.bindClass forProtocol:bean.protocol];
-                    break;
-            }
+            bean.moduleName = moduleName;
+            _iocContext[ProtocolKeyForProtocol(bean.protocol)] = bean;
         }
     }
 }
 
-- (void)registerGlobalClass:(Class)clazz forProtocol:(Protocol *)protocol {
-    if ([self _isInvalidClass:clazz protocol:protocol]) {
+- (void)registerBean:(MDLIOCBean *)bean {
+    if ([self _isInvalidClass:bean.bindClass protocol:bean.protocol]) {
         return;
     }
-    id instance = [[clazz alloc] init];
-    if (!instance) {
-        @throw [NSException exceptionWithName:@"MDLIOCInjectorException" reason:[NSString stringWithFormat:@"Invalid class %@", NSStringFromClass(clazz)] userInfo:nil];
+    NSString *protocolKey = ProtocolKeyForProtocol(bean.protocol);
+    _iocContext[protocolKey] = bean;//缓存Bean对象
+    if (bean.scope == MDLIOCScopeModule) {
+        [self _addProtocolKey:protocolKey forModule:bean.moduleName];
     }
-    NSString *protocolKey = ProtocolKeyForProtocol(protocol);
-    _allBeans[protocolKey] = [MDLIOCBean beanWithProtocol:protocol bindClass:clazz scope:MDLIOCScopeGlobal];
-    _globalContext[protocolKey] = instance;
-}
-
-- (void)registerModuleClass:(Class)clazz forProtocol:(Protocol *)protocol moduleName:(NSString *)moduleName {
-    if ([self _isInvalidClass:clazz protocol:protocol]) {
-        return;
-    }
-    NSString *protocolKey = ProtocolKeyForProtocol(protocol);
-    _allBeans[protocolKey] = [MDLIOCBean beanWithProtocol:protocol bindClass:clazz scope:MDLIOCScopeModule];
-    [self _addProtocolKey:protocolKey forModule:moduleName];
-}
-
-- (void)registerNormalClass:(Class)clazz forProtocol:(Protocol *)protocol {
-    if ([self _isInvalidClass:clazz protocol:protocol]) {
-        return;
-    }
-    _allBeans[ProtocolKeyForProtocol(protocol)] = [MDLIOCBean beanWithProtocol:protocol bindClass:clazz scope:MDLIOCScopeNormal];
 }
 
 //向模块注册一个协议
@@ -158,8 +126,6 @@
             id instance = [self _instanceForProtocolKey:protocolKey];//根据协议Key获取对应的实例
             if ([self _isValidInstance:instance]) {//创建的对象是否有效
                 propertiesDictionary[propertyName] = instance;
-                
-                
             }
         }
         [obj setValuesForKeysWithDictionary:propertiesDictionary];
@@ -223,24 +189,16 @@
 //模块第一次进入时，创建该模块下对应的注入对象
 - (void)_createInstanceOnModuleFirstEnter:(NSString *)moduleName {
     NSArray *protocols = [_procotolsOfModule objectForKey:moduleName];//获取该模块下所有注册的协议
-    for (NSString *protocolKey in protocols) {
-        MDLIOCBean *bean = _allBeans[protocolKey];//获取协议对应的Bean
-        id instance = [[bean.bindClass alloc] init];//根据Bean创建对象
-        if (!instance) {
-            @throw [NSException exceptionWithName:@"MDLIOCInjectorException" reason:[NSString stringWithFormat:@"Invalid class %@", NSStringFromClass(bean.bindClass)] userInfo:nil];
-        }
-        _moduleContext[protocolKey] = instance;
-    }
+    [_iocContext batchCreateInstanceForKeys:protocols];
 }
 
 //模块最后一次退出时，释放该模块下对应的注入对象
 - (void)_releaseInstanceOnModuleLastExit:(NSString *)moduleName {
     NSArray *protocols = [_procotolsOfModule objectForKey:moduleName];
     if (protocols) {
-        [_allBeans removeObjectsForKeys:protocols];
-        [_moduleContext removeObjectsForKeys:protocols];
-        [_procotolsOfModule removeObjectForKey:moduleName];
+        [_iocContext batchRemoveInstanceForKeys:protocols];
     }
+    [_procotolsOfModule removeObjectForKey:moduleName];
     [_moduleLifeCycle removeObjectForKey:moduleName];
 }
 

@@ -7,18 +7,33 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "MDLIOC.h"
+#import "MDLIOCBean.h"
 
 @interface NSObject (MDLIOCInjector)
 
+//调用此方法进行依赖对象注入，需实现MDLInjectableProtocol协议
 - (void)mdlioc_injector;
 
 @end
 
+/**
+ 单例对象，IOC注入器，
+ */
 @interface MDLIOCInjector : NSObject
 
 //返回单例对象
 +(instancetype)shareInstance;
+
+/**
+ @param scope 注入对象作用范围
+ @return 不同作用范围缓存的注入对象
+ */
+- (NSDictionary *)cachesWithScope:(MDLIOCScope)scope;
+
+/**
+ @return 所有的注入Bean
+ */
+- (NSDictionary *)allBeans;
 
 #pragma mark - 获取已注册的依赖对象
 
@@ -32,32 +47,16 @@
 #pragma mark - 注册依赖对象
 
 /**
- 通过对象提供类加载需要注入的实例
- @param providerClassNames IOC注入对象提供类类名集合，需根据类名创建提供对象
+ 通过IOC注入对象提供者加载需要注入的实例
+ @param providerClassNames IOC注入对象提供者类名集合
  */
 - (void)loadIOCInstanceFromProviders:(NSArray<NSString *> *)providerClassNames;
 
 /**
- 给协议注册全局作用域对象，全局作用域对象调用该方法注册时就会创建并缓存
- @param clazz 要注册的类
- @param protocol 协议名称
+ 通过IOC注入描述对象注入依赖对象
+ @param bean IOC注入描述对象
  */
-- (void)registerGlobalClass:(Class)clazz forProtocol:(Protocol *)protocol;
-
-/**
- 给协议注册模块作用域对象，模块作用域对象调用该方法注册时不会创建，只有进入模块时才会统一进行创建，模块退出则相关对象都会释放
- @param clazz 要注册的类
- @param protocol 协议名称
- @param moduleName 模块名称，模块如果有子类化MDLIOCProvider，则必须跟子类化MDLIOCProvider返回的moduleName一致
- */
-- (void)registerModuleClass:(Class)clazz forProtocol:(Protocol *)protocol moduleName:(NSString *)moduleName;
-
-/**
- 给协议注册正常作用域对象，正常作用域对象调用该方法注册时不会创建，只有使用时才会创建，生命周期管理由用户控制，IOC框架并不会进行缓存
- @param clazz 要注册的类
- @param protocol 协议名称
- */
-- (void)registerNormalClass:(Class)clazz forProtocol:(Protocol *)protocol;
+- (void)registerBean:(MDLIOCBean *)bean;
 
 #pragma mark - 依赖注入
 
