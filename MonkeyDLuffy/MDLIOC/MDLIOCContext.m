@@ -64,7 +64,7 @@
     }
 }
 
-- (void)batchCreateInstanceForKeys:(NSArray *)beanKeys {
+- (void)batchCreateModuleInstanceForKeys:(NSArray *)beanKeys {
     for (id <NSCopying> beanKey in beanKeys) {
         MDLIOCBean *bean = _allBeans[beanKey];//通过beanKey获取对应的Bean
         id instance = [[bean.bindClass alloc] init];//根据Bean创建对象
@@ -75,9 +75,24 @@
     }
 }
 
-- (void)batchRemoveInstanceForKeys:(NSArray *)beanKeys {
-    [_allBeans removeObjectsForKeys:beanKeys];
+- (void)batchRemoveModuleInstanceForKeys:(NSArray *)beanKeys {
     [_moduleContext removeObjectsForKeys:beanKeys];
+}
+
+- (void)batchRemoveInstanceForKeys:(NSArray *)beanKeys {
+    for (id<NSCopying> beanKey in beanKeys) {
+        MDLIOCBean *bean = _allBeans[beanKey];//通过beanKey获取对应的Bean
+        switch (bean.scope) {
+            case MDLIOCScopeGlobal:
+                [_globalContext removeObjectForKey:beanKey];
+                break;
+            case MDLIOCScopeModule:
+                [_moduleContext removeObjectForKey:beanKey];
+                break;
+            default:
+                break;
+        }
+    }
 }
 
 #pragma mark - Subscripting

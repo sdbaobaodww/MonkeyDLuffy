@@ -7,7 +7,9 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "MDLIOCInjector.h"
+#import "MDLIOC.h"
+
+#define PreRegisterFlag
 
 //海贼协议
 @protocol HaizeiProtocol <NSObject>
@@ -64,7 +66,7 @@
 @end
 
 //事件
-@interface Event : NSObject
+@interface Event : NSObject<MDLInjectable>
 
 @property (nonatomic, strong) id<HaizeiProtocol> haizei;//海贼
 @property (nonatomic, strong) id<HaiJunProtocol> haijun;//海军
@@ -117,4 +119,20 @@
 
 @end
 
+//船
+@protocol Board <NSObject>
+
+- (void)fight;
+
+@end
+
+//万里阳光号
+@interface WanLiYangGuangHao : NSObject<Board>
+
+@end
+
+//梅里号
+@interface MaliHao : NSObject<Board>
+
+@end
 

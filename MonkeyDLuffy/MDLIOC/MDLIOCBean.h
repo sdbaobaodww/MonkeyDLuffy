@@ -7,7 +7,13 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "MDLIOC.h"
+
+//注入对象作用范围
+typedef NS_ENUM(NSInteger, MDLIOCScope) {
+    MDLIOCScopeNormal,  //正常的作用范围，每次使用时都重新创建
+    MDLIOCScopeModule,  //模块作用范围，跟模块的生命周期相关
+    MDLIOCScopeGlobal,  //全局作用范围，创建以后会常驻内存
+};
 
 /**
  IOC注入描述对象，在该类中设置关联协议、实现类、以及注入对象作用范围等信息

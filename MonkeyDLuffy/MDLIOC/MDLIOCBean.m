@@ -39,4 +39,8 @@
     return [[MDLIOCBean alloc] initWithProtocol:aProtocol bindClass:bindClass scope:MDLIOCScopeModule moduleName:moduleName];
 }
 
+- (NSString *)description {
+    return [NSString stringWithFormat:@"protocol:%@ bind class:%@ scope:%ld moduleName:%@",NSStringFromProtocol(_protocol),NSStringFromClass(_bindClass),(long)_scope,_moduleName];
+}
+
 @end

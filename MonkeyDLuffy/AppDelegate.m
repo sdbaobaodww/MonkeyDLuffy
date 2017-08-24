@@ -7,7 +7,8 @@
 //
 
 #import "AppDelegate.h"
-#import "MDLIOCContext.h"
+#import "MDLIOCInjector.h"
+#import "MDLIOCTestModel.h"
 
 @interface AppDelegate ()
 
@@ -17,12 +18,9 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    MDLIOCContext *context = [[MDLIOCContext alloc] init];
-    
-    context[@"key"] = @"aaaa";
-    
-    NSString *a = context[@"key"];
-    
+    MDLIOCInjector *injector = [MDLIOCInjector shareInstance];
+    id<YingXiangProtocol> yingxiang = [injector instanceForProtocol:@protocol(YingXiangProtocol)];
+    id<Board> board = [injector instanceForProtocol:@protocol(Board)];
     return YES;
 }
 

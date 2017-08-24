@@ -16,7 +16,7 @@
 
 /**
  @param scope 注入对象作用范围
- @return 不同作用范围缓存的注入对象
+ @return 不同作用范围缓存的注入对象，正常作用域范围的对象每次都会重新创建不会进行缓存，所以返回的是nil
  */
 - (NSDictionary *)cachesWithScope:(MDLIOCScope)scope;
 
@@ -44,13 +44,19 @@
 - (id)instanceForKey:(id <NSCopying>)beanKey;
 
 /**
- 批量创建实例
+ 批量创建模块作用域实例
  @param beanKeys BeanKey集合
  */
-- (void)batchCreateInstanceForKeys:(NSArray *)beanKeys;
+- (void)batchCreateModuleInstanceForKeys:(NSArray *)beanKeys;
 
 /**
- 批量删除实例
+ 批量删除已创建的模块作用域实例
+ @param beanKeys BeanKey集合
+ */
+- (void)batchRemoveModuleInstanceForKeys:(NSArray *)beanKeys;
+
+/**
+ 根据BeanKey批量删除已注册对象
  @param beanKeys BeanKey集合
  */
 - (void)batchRemoveInstanceForKeys:(NSArray *)beanKeys;
