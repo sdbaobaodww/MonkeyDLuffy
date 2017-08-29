@@ -7,6 +7,7 @@
 //
 
 #import "ViewController.h"
+#import <ReactiveObjC/ReactiveObjC.h>
 
 @interface ViewController ()
 
@@ -16,9 +17,26 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view, typically from a nib.
+    
+    UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [btn setTitle:@"RAC" forState:UIControlStateNormal];
+    btn.backgroundColor = [UIColor blueColor];
+    btn.frame = CGRectMake(100, 100, 100, 60);
+    [self.view addSubview: btn];
+    
+    RACSignal *tapRAC = [btn rac_signalForControlEvents:UIControlEventTouchUpInside | UIControlEventTouchUpOutside];
+    [tapRAC subscribeNext:^(id  _Nullable x) {
+        [self tapBtn];
+    }];
+    
+    [[self rac_signalForSelector:@selector(tapBtn)] subscribeNext:^(id _Nullable x) {
+        NSLog(@"生成点击信息");
+    }];
 }
 
+- (void)tapBtn {
+    NSLog(@"点击。。。。。");
+}
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

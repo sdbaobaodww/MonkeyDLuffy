@@ -29,6 +29,7 @@
 		4A8E8E831F3C084E006E5953 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4A8E8E811F3C084E006E5953 /* LaunchScreen.storyboard */; };
 		4A8E8E8E1F3C084E006E5953 /* MonkeyDLuffyTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A8E8E8D1F3C084E006E5953 /* MonkeyDLuffyTests.m */; };
 		4A8E8E991F3C084E006E5953 /* MonkeyDLuffyUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A8E8E981F3C084E006E5953 /* MonkeyDLuffyUITests.m */; };
+		642E19D558F601CA3235BDED /* Pods_MonkeyDLuffy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA11EEA08302D1BBC706DDB8 /* Pods_MonkeyDLuffy.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -48,7 +49,21 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		4AF0BD981F50201500FD7C96 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		44BE552FEC24C7840AD4F305 /* Pods-MonkeyDLuffy.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MonkeyDLuffy.release.xcconfig"; path = "Pods/Target Support Files/Pods-MonkeyDLuffy/Pods-MonkeyDLuffy.release.xcconfig"; sourceTree = "<group>"; };
 		4A08EB841F4AFAD200DB41AE /* MDLIOCTestModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MDLIOCTestModel.h; sourceTree = "<group>"; };
 		4A08EB851F4AFAD200DB41AE /* MDLIOCTestModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MDLIOCTestModel.m; sourceTree = "<group>"; };
 		4A0B99D51F3DA57900DAE139 /* NSMethodSignature+MDLBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSMethodSignature+MDLBlock.h"; sourceTree = "<group>"; };
@@ -82,6 +97,8 @@
 		4A8E8E981F3C084E006E5953 /* MonkeyDLuffyUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MonkeyDLuffyUITests.m; sourceTree = "<group>"; };
 		4A8E8E9A1F3C084E006E5953 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4A8E8EA81F3C0AF3006E5953 /* MDLModuleLifecycle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MDLModuleLifecycle.h; sourceTree = "<group>"; };
+		64E246634DA78A054D7EBF88 /* Pods-MonkeyDLuffy.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MonkeyDLuffy.debug.xcconfig"; path = "Pods/Target Support Files/Pods-MonkeyDLuffy/Pods-MonkeyDLuffy.debug.xcconfig"; sourceTree = "<group>"; };
+		AA11EEA08302D1BBC706DDB8 /* Pods_MonkeyDLuffy.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MonkeyDLuffy.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -89,6 +106,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				642E19D558F601CA3235BDED /* Pods_MonkeyDLuffy.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -158,6 +176,8 @@
 				4A8E8E8C1F3C084E006E5953 /* MonkeyDLuffyTests */,
 				4A8E8E971F3C084E006E5953 /* MonkeyDLuffyUITests */,
 				4A8E8E711F3C084E006E5953 /* Products */,
+				FBC1D4B563EB5A0A334A54BF /* Pods */,
+				DC97F2196D09ED0D02841D52 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -228,6 +248,23 @@
 			path = MDLModule;
 			sourceTree = "<group>";
 		};
+		DC97F2196D09ED0D02841D52 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				AA11EEA08302D1BBC706DDB8 /* Pods_MonkeyDLuffy.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		FBC1D4B563EB5A0A334A54BF /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				64E246634DA78A054D7EBF88 /* Pods-MonkeyDLuffy.debug.xcconfig */,
+				44BE552FEC24C7840AD4F305 /* Pods-MonkeyDLuffy.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -235,9 +272,13 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 4A8E8E9D1F3C084E006E5953 /* Build configuration list for PBXNativeTarget "MonkeyDLuffy" */;
 			buildPhases = (
+				1C73BE7091C01DAC62007013 /* [CP] Check Pods Manifest.lock */,
 				4A8E8E6C1F3C084E006E5953 /* Sources */,
 				4A8E8E6D1F3C084E006E5953 /* Frameworks */,
 				4A8E8E6E1F3C084E006E5953 /* Resources */,
+				4AF0BD981F50201500FD7C96 /* Embed Frameworks */,
+				31DFA370B9C2C983D06AC9B0 /* [CP] Embed Pods Frameworks */,
+				E3F27F31716F2AEEF9254129 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -358,6 +399,54 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		1C73BE7091C01DAC62007013 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		31DFA370B9C2C983D06AC9B0 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-MonkeyDLuffy/Pods-MonkeyDLuffy-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		E3F27F31716F2AEEF9254129 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-MonkeyDLuffy/Pods-MonkeyDLuffy-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		4A8E8E6C1F3C084E006E5953 /* Sources */ = {
@@ -529,6 +618,7 @@
 		};
 		4A8E8E9E1F3C084E006E5953 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 64E246634DA78A054D7EBF88 /* Pods-MonkeyDLuffy.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = 59B8QAXTFE;
@@ -541,6 +631,7 @@
 		};
 		4A8E8E9F1F3C084E006E5953 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 44BE552FEC24C7840AD4F305 /* Pods-MonkeyDLuffy.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = 59B8QAXTFE;
