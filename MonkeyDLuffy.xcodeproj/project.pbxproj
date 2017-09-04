@@ -11,8 +11,12 @@
 		4A08EB871F4AFAE200DB41AE /* MDLIOCTestModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A08EB851F4AFAD200DB41AE /* MDLIOCTestModel.m */; };
 		4A0B99D71F3DA57900DAE139 /* NSMethodSignature+MDLBlock.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A0B99D61F3DA57900DAE139 /* NSMethodSignature+MDLBlock.m */; };
 		4A1BF67C1F46ECB50006C9DE /* MDLIOCTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A1BF67B1F46ECB50006C9DE /* MDLIOCTest.m */; };
-		4A75D3FA1F442D640063C74D /* Aspects.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A75D3F81F442D640063C74D /* Aspects.m */; };
-		4A75D3FB1F442D640063C74D /* Aspects.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A75D3F81F442D640063C74D /* Aspects.m */; };
+		4A41EDF01F580E790090E20F /* MDLTrace.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A41EDEF1F580E790090E20F /* MDLTrace.m */; };
+		4A41EE281F5949A40090E20F /* MDLTraceManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A41EE271F5949A40090E20F /* MDLTraceManager.m */; };
+		4A41EE2F1F5955AF0090E20F /* MDLTools.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A41EE2E1F5955AF0090E20F /* MDLTools.m */; };
+		4A483F2C1F5D2CFB00B3CC4E /* MDLTraceTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A483F2B1F5D2CFB00B3CC4E /* MDLTraceTest.m */; };
+		4A483F2D1F5D2D6E00B3CC4E /* MDLTrace.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A41EDEF1F580E790090E20F /* MDLTrace.m */; };
+		4A483F2E1F5D2D7300B3CC4E /* MDLTraceManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A41EE271F5949A40090E20F /* MDLTraceManager.m */; };
 		4A75D3FE1F442E320063C74D /* MDLRuntimeUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A75D3FD1F442E320063C74D /* MDLRuntimeUtil.m */; };
 		4A75D3FF1F442E320063C74D /* MDLRuntimeUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A75D3FD1F442E320063C74D /* MDLRuntimeUtil.m */; };
 		4A75D40A1F443C050063C74D /* MDLIOCContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A75D4091F443C050063C74D /* MDLIOCContext.m */; };
@@ -69,8 +73,13 @@
 		4A0B99D51F3DA57900DAE139 /* NSMethodSignature+MDLBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSMethodSignature+MDLBlock.h"; sourceTree = "<group>"; };
 		4A0B99D61F3DA57900DAE139 /* NSMethodSignature+MDLBlock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSMethodSignature+MDLBlock.m"; sourceTree = "<group>"; };
 		4A1BF67B1F46ECB50006C9DE /* MDLIOCTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MDLIOCTest.m; sourceTree = "<group>"; };
-		4A75D3F71F442D640063C74D /* Aspects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Aspects.h; sourceTree = "<group>"; };
-		4A75D3F81F442D640063C74D /* Aspects.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Aspects.m; sourceTree = "<group>"; };
+		4A41EDEE1F580E790090E20F /* MDLTrace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MDLTrace.h; sourceTree = "<group>"; };
+		4A41EDEF1F580E790090E20F /* MDLTrace.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MDLTrace.m; sourceTree = "<group>"; };
+		4A41EE261F5949A40090E20F /* MDLTraceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MDLTraceManager.h; sourceTree = "<group>"; };
+		4A41EE271F5949A40090E20F /* MDLTraceManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MDLTraceManager.m; sourceTree = "<group>"; };
+		4A41EE2D1F5955AF0090E20F /* MDLTools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MDLTools.h; sourceTree = "<group>"; };
+		4A41EE2E1F5955AF0090E20F /* MDLTools.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MDLTools.m; sourceTree = "<group>"; };
+		4A483F2B1F5D2CFB00B3CC4E /* MDLTraceTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MDLTraceTest.m; sourceTree = "<group>"; };
 		4A75D3FC1F442E320063C74D /* MDLRuntimeUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MDLRuntimeUtil.h; sourceTree = "<group>"; };
 		4A75D3FD1F442E320063C74D /* MDLRuntimeUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MDLRuntimeUtil.m; sourceTree = "<group>"; };
 		4A75D4081F443C050063C74D /* MDLIOCContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MDLIOCContext.h; sourceTree = "<group>"; };
@@ -146,13 +155,32 @@
 			path = MDLIOCTest;
 			sourceTree = "<group>";
 		};
-		4A75D3F61F442D640063C74D /* MDLAspect */ = {
+		4A41EDE61F580CA90090E20F /* MDLTrace */ = {
 			isa = PBXGroup;
 			children = (
-				4A75D3F71F442D640063C74D /* Aspects.h */,
-				4A75D3F81F442D640063C74D /* Aspects.m */,
+				4A41EDEE1F580E790090E20F /* MDLTrace.h */,
+				4A41EDEF1F580E790090E20F /* MDLTrace.m */,
+				4A41EE261F5949A40090E20F /* MDLTraceManager.h */,
+				4A41EE271F5949A40090E20F /* MDLTraceManager.m */,
 			);
-			path = MDLAspect;
+			path = MDLTrace;
+			sourceTree = "<group>";
+		};
+		4A41EE2C1F5955A40090E20F /* MDLCommon */ = {
+			isa = PBXGroup;
+			children = (
+				4A41EE2D1F5955AF0090E20F /* MDLTools.h */,
+				4A41EE2E1F5955AF0090E20F /* MDLTools.m */,
+			);
+			path = MDLCommon;
+			sourceTree = "<group>";
+		};
+		4A483F2A1F5D2CE500B3CC4E /* MDLTraceTest */ = {
+			isa = PBXGroup;
+			children = (
+				4A483F2B1F5D2CFB00B3CC4E /* MDLTraceTest.m */,
+			);
+			path = MDLTraceTest;
 			sourceTree = "<group>";
 		};
 		4A75D3F91F442D640063C74D /* MDLIOC */ = {
@@ -194,7 +222,8 @@
 		4A8E8E721F3C084E006E5953 /* MonkeyDLuffy */ = {
 			isa = PBXGroup;
 			children = (
-				4A75D3F61F442D640063C74D /* MDLAspect */,
+				4A41EE2C1F5955A40090E20F /* MDLCommon */,
+				4A41EDE61F580CA90090E20F /* MDLTrace */,
 				4A75D3F91F442D640063C74D /* MDLIOC */,
 				4A0B99D41F3DA55200DAE139 /* MDLRuntime */,
 				4A8E8EA71F3C0AAF006E5953 /* MDLModule */,
@@ -224,6 +253,7 @@
 		4A8E8E8C1F3C084E006E5953 /* MonkeyDLuffyTests */ = {
 			isa = PBXGroup;
 			children = (
+				4A483F2A1F5D2CE500B3CC4E /* MDLTraceTest */,
 				4A1BF67A1F46ECB50006C9DE /* MDLIOCTest */,
 				4A8E8E8D1F3C084E006E5953 /* MonkeyDLuffyTests.m */,
 				4A8E8E8F1F3C084E006E5953 /* Info.plist */,
@@ -453,13 +483,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4A75D3FA1F442D640063C74D /* Aspects.m in Sources */,
 				4A75D4231F457F3F0063C74D /* MDLIOCInjector.m in Sources */,
+				4A41EDF01F580E790090E20F /* MDLTrace.m in Sources */,
 				4A8E8E7B1F3C084E006E5953 /* ViewController.m in Sources */,
 				4A75D40A1F443C050063C74D /* MDLIOCContext.m in Sources */,
 				4A75D3FE1F442E320063C74D /* MDLRuntimeUtil.m in Sources */,
 				4A0B99D71F3DA57900DAE139 /* NSMethodSignature+MDLBlock.m in Sources */,
 				4A8E8E781F3C084E006E5953 /* AppDelegate.m in Sources */,
+				4A41EE2F1F5955AF0090E20F /* MDLTools.m in Sources */,
+				4A41EE281F5949A40090E20F /* MDLTraceManager.m in Sources */,
 				4A08EB861F4AFAD200DB41AE /* MDLIOCTestModel.m in Sources */,
 				4A8E8E751F3C084E006E5953 /* main.m in Sources */,
 				4A75D41E1F456C3D0063C74D /* MDLIOCBean.m in Sources */,
@@ -474,10 +506,12 @@
 				4A75D4241F457F3F0063C74D /* MDLIOCInjector.m in Sources */,
 				4A75D41F1F456C3D0063C74D /* MDLIOCBean.m in Sources */,
 				4A8E8E8E1F3C084E006E5953 /* MonkeyDLuffyTests.m in Sources */,
-				4A75D3FB1F442D640063C74D /* Aspects.m in Sources */,
 				4A08EB871F4AFAE200DB41AE /* MDLIOCTestModel.m in Sources */,
+				4A483F2C1F5D2CFB00B3CC4E /* MDLTraceTest.m in Sources */,
 				4A75D3FF1F442E320063C74D /* MDLRuntimeUtil.m in Sources */,
 				4A1BF67C1F46ECB50006C9DE /* MDLIOCTest.m in Sources */,
+				4A483F2D1F5D2D6E00B3CC4E /* MDLTrace.m in Sources */,
+				4A483F2E1F5D2D7300B3CC4E /* MDLTraceManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -526,6 +560,7 @@
 /* Begin XCBuildConfiguration section */
 		4A8E8E9B1F3C084E006E5953 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 64E246634DA78A054D7EBF88 /* Pods-MonkeyDLuffy.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -575,6 +610,7 @@
 		};
 		4A8E8E9C1F3C084E006E5953 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 44BE552FEC24C7840AD4F305 /* Pods-MonkeyDLuffy.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -644,6 +680,7 @@
 		};
 		4A8E8EA11F3C084E006E5953 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 64E246634DA78A054D7EBF88 /* Pods-MonkeyDLuffy.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				DEVELOPMENT_TEAM = 59B8QAXTFE;
@@ -657,6 +694,7 @@
 		};
 		4A8E8EA21F3C084E006E5953 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 44BE552FEC24C7840AD4F305 /* Pods-MonkeyDLuffy.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				DEVELOPMENT_TEAM = 59B8QAXTFE;
@@ -670,6 +708,7 @@
 		};
 		4A8E8EA41F3C084E006E5953 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 64E246634DA78A054D7EBF88 /* Pods-MonkeyDLuffy.debug.xcconfig */;
 			buildSettings = {
 				DEVELOPMENT_TEAM = 59B8QAXTFE;
 				INFOPLIST_FILE = MonkeyDLuffyUITests/Info.plist;
@@ -682,6 +721,7 @@
 		};
 		4A8E8EA51F3C084E006E5953 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 44BE552FEC24C7840AD4F305 /* Pods-MonkeyDLuffy.release.xcconfig */;
 			buildSettings = {
 				DEVELOPMENT_TEAM = 59B8QAXTFE;
 				INFOPLIST_FILE = MonkeyDLuffyUITests/Info.plist;

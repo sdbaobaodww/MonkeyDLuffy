@@ -18,7 +18,7 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    MDLIOCInjector *injector = [MDLIOCInjector shareInstance];
+    MDLIOCInjector *injector = [MDLIOCInjector sharedInstance];
     id<YingXiangProtocol> yingxiang = [injector instanceForProtocol:@protocol(YingXiangProtocol)];
     id<Board> board = [injector instanceForProtocol:@protocol(Board)];
     return YES;

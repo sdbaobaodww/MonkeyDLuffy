@@ -35,12 +35,12 @@
 #pragma mark - IOC注入器
 
 /**
- 单例对象，IOC注入器
+ IOC注入器，单例对象，管理依赖对象的注册、获取、注入，只有注册过的对象才能被获取及注入。
  */
 @interface MDLIOCInjector : NSObject
 
 //返回单例对象
-+(instancetype)shareInstance;
++(instancetype)sharedInstance;
 
 /**
  重置当前上下文，清空所有已注册和生成的缓存对象
@@ -48,7 +48,7 @@
 - (void)resetContext;
 
 /**
- 通过类似注解的方式注册依赖对象
+ 通过类似注解的方式注册依赖对象，注册对象应在+load方法中进行注解注册，注入器初始化时，会将注解注册的对象统一进行注册
  @param bean IOC注入描述对象
  */
 + (void)annotationRegisterBean:(MDLIOCBean *)bean;

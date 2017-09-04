@@ -113,7 +113,7 @@ mdlioc_requires(@"haizei",@"haijun",@"zhanchang")
 {
     self = [super init];
     if (self) {
-        [[MDLIOCInjector shareInstance] injector:self];
+        [[MDLIOCInjector sharedInstance] injector:self];
     }
     return self;
 }
@@ -138,7 +138,7 @@ mdlioc_requires(@"jieguo")
 {
     self = [super init];
     if (self) {
-        [[MDLIOCInjector shareInstance] injector:self];
+        [[MDLIOCInjector sharedInstance] injector:self];
     }
     return self;
 }
@@ -178,7 +178,7 @@ mdlioc_requires(@"yingxiang")
 {
     self = [super init];
     if (self) {
-        [[MDLIOCInjector shareInstance] injector:self];
+        [[MDLIOCInjector sharedInstance] injector:self];
     }
     return self;
 }

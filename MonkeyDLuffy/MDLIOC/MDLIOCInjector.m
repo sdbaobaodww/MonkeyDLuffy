@@ -22,7 +22,7 @@ static NSString * ProtocolKeyForProtocol(Protocol *aProtocol) {
         @throw [NSException exceptionWithName:@"MDLIOCInjectorException" reason:@"object must conforms protocol MDLInjectable!" userInfo:nil];
         return;
     }
-    [[MDLIOCInjector shareInstance] injector:(id<MDLInjectable>)self];
+    [[MDLIOCInjector sharedInstance] injector:(id<MDLInjectable>)self];
 }
 
 @end
@@ -37,7 +37,7 @@ static NSString * ProtocolKeyForProtocol(Protocol *aProtocol) {
     NSLock *_moduleLock;
 }
 
-+(instancetype)shareInstance {
++(instancetype)sharedInstance {
     static id instance = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
@@ -73,39 +73,57 @@ static NSMutableArray * _annotationRegisterBeans = nil;
 }
 
 - (void)resetContext {
+    [_moduleLock lock];
     _iocContext = [[MDLIOCContext alloc] init];
+    [_moduleLock unlock];
 }
 
 - (void)_loadAnnotationRegisterBeans {
+    [_moduleLock lock];
     for (MDLIOCBean *bean in _annotationRegisterBeans) {
         _iocContext[ProtocolKeyForProtocol(bean.protocol)] = bean;
         NSLog(@"register at init method %@",bean);
     }
+    [_moduleLock unlock];
     [_annotationRegisterBeans removeAllObjects];
     _annotationRegisterBeans = nil;
 }
 
 - (NSDictionary *)cachesWithScope:(MDLIOCScope)scope {
-    return [_iocContext cachesWithScope:scope];
+    [_moduleLock lock];
+    NSDictionary *result = [_iocContext cachesWithScope:scope];
+    [_moduleLock unlock];
+    return result;
 }
 
 - (NSDictionary *)allBeans {
-    return [_iocContext allBeans];
+    [_moduleLock lock];
+    NSDictionary *result = [_iocContext allBeans];
+    [_moduleLock unlock];
+    return result;
 }
 
 #pragma mark - 获取已注册的依赖对象
 
 - (id)instanceForProtocol:(Protocol *)protocol {
-    return [_iocContext instanceForKey:ProtocolKeyForProtocol(protocol)];
+    return [self _instanceForProtocolKey:ProtocolKeyForProtocol(protocol)];
 }
 
 - (id)_instanceForProtocolKey:(NSString *)protocolKey {
-    return [_iocContext instanceForKey:protocolKey];
+    [_moduleLock lock];
+    id result = [_iocContext instanceForKey:protocolKey];
+    [_moduleLock unlock];
+    return result;
 }
 
 #pragma mark - 注册依赖对象
 
 - (void)loadIOCInstanceFromProviders:(NSArray<NSString *> *)providerClassNames {
+    if ([providerClassNames count] == 0) {
+        return;
+    }
+    
+    [_moduleLock lock];
     for (NSString *providerClassName in providerClassNames) {
         Class<MDLIOCProvider> provider= NSClassFromString(providerClassName);//IOC注入对象提供类
         NSString *moduleName = [provider moduleName];//模块名称        
@@ -114,6 +132,7 @@ static NSMutableArray * _annotationRegisterBeans = nil;
             _iocContext[ProtocolKeyForProtocol(bean.protocol)] = bean;
         }
     }
+    [_moduleLock unlock];
 }
 
 - (void)registerBean:(MDLIOCBean *)bean {
@@ -121,10 +140,13 @@ static NSMutableArray * _annotationRegisterBeans = nil;
     if ([self _isInvalidRegister:bean.bindClass protocolKey:protocolKey]) {
         return;
     }
+    
+    [_moduleLock unlock];
     _iocContext[protocolKey] = bean;//缓存Bean对象
     if (bean.scope == MDLIOCScopeModule) {
         [self _addProtocolKey:protocolKey forModule:bean.moduleName];
     }
+    [_moduleLock unlock];
 }
 
 //向模块注册一个协议

@@ -29,7 +29,7 @@
 #ifdef PreRegisterFlag
 //测试注解方式注入对象，必须在第一个resetContext方法调用之前，防止数据被清空
 - (void)testAnnotationRegisterBean {
-    MDLIOCInjector *injector = [MDLIOCInjector shareInstance];
+    MDLIOCInjector *injector = [MDLIOCInjector sharedInstance];
     NSAssert([[injector allBeans] count] == 2, @"当前依赖的Bean个数为2");
     
     id<YingXiangProtocol> yingxiang = [injector instanceForProtocol:@protocol(YingXiangProtocol)];
@@ -54,7 +54,7 @@
 
 //测试注册正常作用域Bean
 - (void)testRegisterNormalScopeBean {
-    MDLIOCInjector *injector = [MDLIOCInjector shareInstance];
+    MDLIOCInjector *injector = [MDLIOCInjector sharedInstance];
     [injector resetContext];
    
     MDLIOCBean *haizeiBean = [MDLIOCBean beanWithProtocol:@protocol(HaizeiProtocol) bindClass:[Lufei class] scope:MDLIOCScopeNormal];
@@ -88,7 +88,7 @@
 
 //测试注册模块作用域Bean
 - (void)testRegisterModuleScopeBean {
-    MDLIOCInjector *injector = [MDLIOCInjector shareInstance];
+    MDLIOCInjector *injector = [MDLIOCInjector sharedInstance];
     [injector resetContext];
     
     MDLIOCBean *haizeiBean = [MDLIOCBean moduleBeanWithProtocol:@protocol(HaizeiProtocol) bindClass:[Lufei class] moduleName:@"module"];
@@ -160,7 +160,7 @@
 }
 
 - (void)testRegisterGlobalScopeBean {
-    MDLIOCInjector *injector = [MDLIOCInjector shareInstance];
+    MDLIOCInjector *injector = [MDLIOCInjector sharedInstance];
     [injector resetContext];
     
     MDLIOCBean *haizeiBean = [MDLIOCBean beanWithProtocol:@protocol(HaizeiProtocol) bindClass:[Lufei class] scope:MDLIOCScopeGlobal];
@@ -196,7 +196,7 @@
 - (void)testPerformanceExample {
     [self measureBlock:^{
         for (int i = 0; i < 100; i ++) {
-            MDLIOCInjector *injector = [MDLIOCInjector shareInstance];
+            MDLIOCInjector *injector = [MDLIOCInjector sharedInstance];
             [injector resetContext];
             
             [injector registerBean:[MDLIOCBean beanWithProtocol:@protocol(HaizeiProtocol) bindClass:[Lufei class] scope:MDLIOCScopeNormal]];
