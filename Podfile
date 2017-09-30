@@ -10,4 +10,7 @@ target ‘MonkeyDLuffy’ do
     pod 'Aspects', '~> 1.4.1'
     pod 'JSONModel', '~> 1.7.0'
     pod 'SAMKeychain', '~> 1.5.2'
+    pod 'BeeHive', '~> 1.5.1'
+    pod 'UITableView+FDTemplateLayoutCell', '~> 1.6'
+    pod 'JKCategories', '~> 1.5'
 end

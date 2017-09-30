@@ -9,6 +9,7 @@
 #import "AppDelegate.h"
 #import "MDLIOCInjector.h"
 #import "MDLIOCTestModel.h"
+#import "MDLProtocolProxy.h"
 
 @interface AppDelegate ()
 
@@ -18,12 +19,29 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    MDLIOCInjector *injector = [MDLIOCInjector sharedInstance];
-    id<YingXiangProtocol> yingxiang = [injector instanceForProtocol:@protocol(YingXiangProtocol)];
-    id<Board> board = [injector instanceForProtocol:@protocol(Board)];
+    id<YingXiangProtocol> yingxiang = [MDLIOCGetter instanceForProtocol:@protocol(YingXiangProtocol)];
+    id<Board> board = [MDLIOCGetter instanceForProtocol:@protocol(Board)];
+    
+    id<Board,NSObject> board1 = [[WanLiYangGuangHao alloc] init];
+    id<Board,NSObject> board2 = [[MaliHao alloc] init];
+    id<Board,NSObject> board3 = [[HuangjinMaliHao alloc] init];
+    MDLProtocolProxy *proxy = [[MDLProtocolProxy alloc] initWithProtocol:@protocol(Board)];
+    
+    [proxy addProtocolImplWithClass:[board1 class]];
+    [proxy addProtocolImplWithClass:[board2 class]];
+    [proxy addProtocolImplWithClass:[board3 class]];
+    
+    [(id<Board>)proxy fight];
+    [(id<Board>)proxy say:@"向前冲"];
+    [(id<Board>)proxy victor:@"1111" song:@"222"];
+    
     return YES;
 }
 
+- (void)function1 {
+
+
+}
 
 - (void)applicationWillResignActive:(UIApplication *)application {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.

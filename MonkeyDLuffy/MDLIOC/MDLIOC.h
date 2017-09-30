@@ -42,27 +42,22 @@ static NSSet * BuildDependenciesForClass(Class clazz, NSSet *requirements) {
 } \
 - (instancetype)init { \
     if (self = [super init]) { \
-        [[MDLIOCInjector shareInstance] injector:self]; \
+        [MDLIOCInjector injector:self]; \
     } \
     return self; \
 }
 
-//注解方式注册正常作用域对象
-#define mdlioc_register_normal(protocol)			\
+//注解方式注册依赖对象
+#define mdlioc_annotation_register(_protocol, _cachePolicy, _alias)			\
 + (void)load { \
-    [MDLIOCInjector annotationRegisterBean:[MDLIOCBean beanWithProtocol:protocol bindClass:self scope:MDLIOCScopeNormal]]; \
+    [MDLIOCRegister registerBean:[MDLIOCBean beanWithProtocol:(_protocol) bindClass:self cachePolicy:(_cachePolicy) alias:(_alias)]]; \
 }
 
-//注解方式注册模块作用域对象
-#define mdlioc_register_module(protocol, module) \
+//注解方式注册依赖对象
+#define mdlioc_annotation_register_nocache_noalias(_protocol)			\
 + (void)load { \
-    [MDLIOCInjector annotationRegisterBean:[MDLIOCBean moduleBeanWithProtocol:protocol bindClass:self moduleName:module]]; \
+    [MDLIOCRegister registerBean:[MDLIOCBean beanWithProtocol:(_protocol) bindClass:self cachePolicy:MDLIOCCachePolicyNone alias:nil]]; \
 }
 
-//注解方式注册全局作用域对象
-#define mdlioc_register_global(protocol) \
-+ (void)load { \
-    [MDLIOCInjector annotationRegisterBean:[MDLIOCBean beanWithProtocol:protocol bindClass:self scope:MDLIOCScopeGlobal]]; \
-}
 
 #endif /* MDLIOC_h */

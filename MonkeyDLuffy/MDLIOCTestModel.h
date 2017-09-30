@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "MDLIOC.h"
+#import <BeeHive/BeeHive.h>
 
 #define PreRegisterFlag
 
@@ -120,9 +121,13 @@
 @end
 
 //船
-@protocol Board <NSObject>
+@protocol Board
 
 - (void)fight;
+
+- (void)say:(NSString *)str;
+
++ (void)victor:(NSString *)eat song:(NSString *)song;
 
 @end
 
@@ -133,6 +138,11 @@
 
 //梅里号
 @interface MaliHao : NSObject<Board>
+
+@end
+
+//黄金梅里号
+@interface HuangjinMaliHao : MaliHao
 
 @end
 

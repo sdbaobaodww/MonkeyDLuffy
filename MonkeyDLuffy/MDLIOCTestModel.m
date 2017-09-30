@@ -10,6 +10,8 @@
 
 @implementation Lufei
 
+@BeeHiveService(HaizeiProtocol,Lufei)
+
 - (void)fight {
     NSLog(@"我是路飞，看我的橡胶机关枪");
 }
@@ -113,7 +115,7 @@ mdlioc_requires(@"haizei",@"haijun",@"zhanchang")
 {
     self = [super init];
     if (self) {
-        [[MDLIOCInjector sharedInstance] injector:self];
+        [MDLIOCInjector injector:self];
     }
     return self;
 }
@@ -138,7 +140,7 @@ mdlioc_requires(@"jieguo")
 {
     self = [super init];
     if (self) {
-        [[MDLIOCInjector sharedInstance] injector:self];
+        [MDLIOCInjector injector:self];
     }
     return self;
 }
@@ -157,7 +159,7 @@ mdlioc_requires(@"jieguo")
 @implementation LufeiUp
 
 #ifdef PreRegisterFlag
-mdlioc_register_normal(@protocol(YingXiangProtocol))
+mdlioc_annotation_register_nocache_noalias(@protocol(YingXiangProtocol))
 #endif
 
 - (void)fight {
@@ -178,7 +180,7 @@ mdlioc_requires(@"yingxiang")
 {
     self = [super init];
     if (self) {
-        [[MDLIOCInjector sharedInstance] injector:self];
+        [MDLIOCInjector injector:self];
     }
     return self;
 }
@@ -204,12 +206,20 @@ mdlioc_requires(@"yingxiang")
     return [NSString stringWithFormat:@"<%p> 万里阳光号", self];
 }
 
+- (void)say:(NSString *)str {
+    NSLog(@"万里阳光号 %@",str);
+}
+
++ (void)victor:(NSString *)eat song:(NSString *)song {
+    NSLog(@"万里阳光号 %@ %@",eat,song);
+}
+
 @end
 
 @implementation MaliHao
 
 #ifdef PreRegisterFlag
-mdlioc_register_global(@protocol(Board))
+mdlioc_annotation_register(@protocol(Board), MDLIOCCachePolicyCache, nil)
 #endif
 
 - (void)fight {
@@ -218,6 +228,34 @@ mdlioc_register_global(@protocol(Board))
 
 - (NSString *)description {
     return [NSString stringWithFormat:@"<%p> 梅里号", self];
+}
+
+- (void)say:(NSString *)str {
+    NSLog(@"梅里号 %@",str);
+}
+
++ (void)victor:(NSString *)eat song:(NSString *)song {
+    NSLog(@"梅里号 %@ %@",eat,song);
+}
+
+@end
+
+@implementation HuangjinMaliHao
+
+- (void)fight {
+    NSLog(@"黄金梅里号");
+}
+
+- (NSString *)description {
+    return [NSString stringWithFormat:@"<%p> 黄金梅里号", self];
+}
+
+- (void)say:(NSString *)str {
+    NSLog(@"黄金梅里号 %@",str);
+}
+
++ (void)victor:(NSString *)eat song:(NSString *)song {
+    NSLog(@"黄金梅里号 %@ %@",eat,song);
 }
 
 @end

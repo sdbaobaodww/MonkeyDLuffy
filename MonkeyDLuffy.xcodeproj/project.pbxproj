@@ -9,8 +9,10 @@
 /* Begin PBXBuildFile section */
 		4A08EB861F4AFAD200DB41AE /* MDLIOCTestModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A08EB851F4AFAD200DB41AE /* MDLIOCTestModel.m */; };
 		4A08EB871F4AFAE200DB41AE /* MDLIOCTestModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A08EB851F4AFAD200DB41AE /* MDLIOCTestModel.m */; };
+		4A0A7F091F6A1C5C004228C2 /* MDLProtocolProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A0A7F081F6A1C5C004228C2 /* MDLProtocolProxy.m */; };
 		4A0B99D71F3DA57900DAE139 /* NSMethodSignature+MDLBlock.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A0B99D61F3DA57900DAE139 /* NSMethodSignature+MDLBlock.m */; };
 		4A1BF67C1F46ECB50006C9DE /* MDLIOCTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A1BF67B1F46ECB50006C9DE /* MDLIOCTest.m */; };
+		4A3BB7471F6F74A400DBEB88 /* MDLIOCInjector.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A3BB7461F6F74A400DBEB88 /* MDLIOCInjector.m */; };
 		4A41EDF01F580E790090E20F /* MDLTrace.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A41EDEF1F580E790090E20F /* MDLTrace.m */; };
 		4A41EE281F5949A40090E20F /* MDLTraceManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A41EE271F5949A40090E20F /* MDLTraceManager.m */; };
 		4A41EE2F1F5955AF0090E20F /* MDLTools.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A41EE2E1F5955AF0090E20F /* MDLTools.m */; };
@@ -23,8 +25,6 @@
 		4A75D40B1F443C050063C74D /* MDLIOCContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A75D4091F443C050063C74D /* MDLIOCContext.m */; };
 		4A75D41E1F456C3D0063C74D /* MDLIOCBean.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A75D41D1F456C3D0063C74D /* MDLIOCBean.m */; };
 		4A75D41F1F456C3D0063C74D /* MDLIOCBean.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A75D41D1F456C3D0063C74D /* MDLIOCBean.m */; };
-		4A75D4231F457F3F0063C74D /* MDLIOCInjector.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A75D4221F457F3F0063C74D /* MDLIOCInjector.m */; };
-		4A75D4241F457F3F0063C74D /* MDLIOCInjector.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A75D4221F457F3F0063C74D /* MDLIOCInjector.m */; };
 		4A8E8E751F3C084E006E5953 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A8E8E741F3C084E006E5953 /* main.m */; };
 		4A8E8E781F3C084E006E5953 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A8E8E771F3C084E006E5953 /* AppDelegate.m */; };
 		4A8E8E7B1F3C084E006E5953 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A8E8E7A1F3C084E006E5953 /* ViewController.m */; };
@@ -33,6 +33,7 @@
 		4A8E8E831F3C084E006E5953 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4A8E8E811F3C084E006E5953 /* LaunchScreen.storyboard */; };
 		4A8E8E8E1F3C084E006E5953 /* MonkeyDLuffyTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A8E8E8D1F3C084E006E5953 /* MonkeyDLuffyTests.m */; };
 		4A8E8E991F3C084E006E5953 /* MonkeyDLuffyUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A8E8E981F3C084E006E5953 /* MonkeyDLuffyUITests.m */; };
+		4AA1155B1F735A2800EC9184 /* SKBounceAnimation.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AA1155A1F735A2800EC9184 /* SKBounceAnimation.m */; };
 		642E19D558F601CA3235BDED /* Pods_MonkeyDLuffy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA11EEA08302D1BBC706DDB8 /* Pods_MonkeyDLuffy.framework */; };
 /* End PBXBuildFile section */
 
@@ -67,12 +68,16 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		44BE552FEC24C7840AD4F305 /* Pods-MonkeyDLuffy.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MonkeyDLuffy.release.xcconfig"; path = "Pods/Target Support Files/Pods-MonkeyDLuffy/Pods-MonkeyDLuffy.release.xcconfig"; sourceTree = "<group>"; };
+		299E949CE77DD72B3EE4A63E /* Pods-MonkeyDLuffy.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MonkeyDLuffy.release.xcconfig"; path = "Pods/Target Support Files/Pods-MonkeyDLuffy/Pods-MonkeyDLuffy.release.xcconfig"; sourceTree = "<group>"; };
 		4A08EB841F4AFAD200DB41AE /* MDLIOCTestModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MDLIOCTestModel.h; sourceTree = "<group>"; };
 		4A08EB851F4AFAD200DB41AE /* MDLIOCTestModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MDLIOCTestModel.m; sourceTree = "<group>"; };
+		4A0A7F071F6A1C5C004228C2 /* MDLProtocolProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MDLProtocolProxy.h; sourceTree = "<group>"; };
+		4A0A7F081F6A1C5C004228C2 /* MDLProtocolProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MDLProtocolProxy.m; sourceTree = "<group>"; };
 		4A0B99D51F3DA57900DAE139 /* NSMethodSignature+MDLBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSMethodSignature+MDLBlock.h"; sourceTree = "<group>"; };
 		4A0B99D61F3DA57900DAE139 /* NSMethodSignature+MDLBlock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSMethodSignature+MDLBlock.m"; sourceTree = "<group>"; };
 		4A1BF67B1F46ECB50006C9DE /* MDLIOCTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MDLIOCTest.m; sourceTree = "<group>"; };
+		4A3BB7451F6F74A400DBEB88 /* MDLIOCInjector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MDLIOCInjector.h; sourceTree = "<group>"; };
+		4A3BB7461F6F74A400DBEB88 /* MDLIOCInjector.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MDLIOCInjector.m; sourceTree = "<group>"; };
 		4A41EDEE1F580E790090E20F /* MDLTrace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MDLTrace.h; sourceTree = "<group>"; };
 		4A41EDEF1F580E790090E20F /* MDLTrace.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MDLTrace.m; sourceTree = "<group>"; };
 		4A41EE261F5949A40090E20F /* MDLTraceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MDLTraceManager.h; sourceTree = "<group>"; };
@@ -87,8 +92,6 @@
 		4A75D41C1F456C3D0063C74D /* MDLIOCBean.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MDLIOCBean.h; sourceTree = "<group>"; };
 		4A75D41D1F456C3D0063C74D /* MDLIOCBean.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MDLIOCBean.m; sourceTree = "<group>"; };
 		4A75D4201F45794B0063C74D /* MDLIOC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MDLIOC.h; sourceTree = "<group>"; };
-		4A75D4211F457F3F0063C74D /* MDLIOCInjector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MDLIOCInjector.h; sourceTree = "<group>"; };
-		4A75D4221F457F3F0063C74D /* MDLIOCInjector.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MDLIOCInjector.m; sourceTree = "<group>"; };
 		4A8E8E701F3C084E006E5953 /* MonkeyDLuffy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MonkeyDLuffy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4A8E8E741F3C084E006E5953 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		4A8E8E761F3C084E006E5953 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -106,8 +109,10 @@
 		4A8E8E981F3C084E006E5953 /* MonkeyDLuffyUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MonkeyDLuffyUITests.m; sourceTree = "<group>"; };
 		4A8E8E9A1F3C084E006E5953 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4A8E8EA81F3C0AF3006E5953 /* MDLModuleLifecycle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MDLModuleLifecycle.h; sourceTree = "<group>"; };
-		64E246634DA78A054D7EBF88 /* Pods-MonkeyDLuffy.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MonkeyDLuffy.debug.xcconfig"; path = "Pods/Target Support Files/Pods-MonkeyDLuffy/Pods-MonkeyDLuffy.debug.xcconfig"; sourceTree = "<group>"; };
+		4AA115591F735A2800EC9184 /* SKBounceAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SKBounceAnimation.h; sourceTree = "<group>"; };
+		4AA1155A1F735A2800EC9184 /* SKBounceAnimation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SKBounceAnimation.m; sourceTree = "<group>"; };
 		AA11EEA08302D1BBC706DDB8 /* Pods_MonkeyDLuffy.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MonkeyDLuffy.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		C415A025EA6AAC770E412CB7 /* Pods-MonkeyDLuffy.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MonkeyDLuffy.debug.xcconfig"; path = "Pods/Target Support Files/Pods-MonkeyDLuffy/Pods-MonkeyDLuffy.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -191,8 +196,10 @@
 				4A75D41D1F456C3D0063C74D /* MDLIOCBean.m */,
 				4A75D4081F443C050063C74D /* MDLIOCContext.h */,
 				4A75D4091F443C050063C74D /* MDLIOCContext.m */,
-				4A75D4211F457F3F0063C74D /* MDLIOCInjector.h */,
-				4A75D4221F457F3F0063C74D /* MDLIOCInjector.m */,
+				4A0A7F071F6A1C5C004228C2 /* MDLProtocolProxy.h */,
+				4A0A7F081F6A1C5C004228C2 /* MDLProtocolProxy.m */,
+				4A3BB7451F6F74A400DBEB88 /* MDLIOCInjector.h */,
+				4A3BB7461F6F74A400DBEB88 /* MDLIOCInjector.m */,
 			);
 			path = MDLIOC;
 			sourceTree = "<group>";
@@ -229,6 +236,8 @@
 				4A8E8EA71F3C0AAF006E5953 /* MDLModule */,
 				4A8E8E761F3C084E006E5953 /* AppDelegate.h */,
 				4A8E8E771F3C084E006E5953 /* AppDelegate.m */,
+				4AA115591F735A2800EC9184 /* SKBounceAnimation.h */,
+				4AA1155A1F735A2800EC9184 /* SKBounceAnimation.m */,
 				4A08EB841F4AFAD200DB41AE /* MDLIOCTestModel.h */,
 				4A08EB851F4AFAD200DB41AE /* MDLIOCTestModel.m */,
 				4A8E8E791F3C084E006E5953 /* ViewController.h */,
@@ -289,8 +298,8 @@
 		FBC1D4B563EB5A0A334A54BF /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				64E246634DA78A054D7EBF88 /* Pods-MonkeyDLuffy.debug.xcconfig */,
-				44BE552FEC24C7840AD4F305 /* Pods-MonkeyDLuffy.release.xcconfig */,
+				C415A025EA6AAC770E412CB7 /* Pods-MonkeyDLuffy.debug.xcconfig */,
+				299E949CE77DD72B3EE4A63E /* Pods-MonkeyDLuffy.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -483,12 +492,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4A75D4231F457F3F0063C74D /* MDLIOCInjector.m in Sources */,
+				4A0A7F091F6A1C5C004228C2 /* MDLProtocolProxy.m in Sources */,
+				4A3BB7471F6F74A400DBEB88 /* MDLIOCInjector.m in Sources */,
 				4A41EDF01F580E790090E20F /* MDLTrace.m in Sources */,
 				4A8E8E7B1F3C084E006E5953 /* ViewController.m in Sources */,
 				4A75D40A1F443C050063C74D /* MDLIOCContext.m in Sources */,
 				4A75D3FE1F442E320063C74D /* MDLRuntimeUtil.m in Sources */,
 				4A0B99D71F3DA57900DAE139 /* NSMethodSignature+MDLBlock.m in Sources */,
+				4AA1155B1F735A2800EC9184 /* SKBounceAnimation.m in Sources */,
 				4A8E8E781F3C084E006E5953 /* AppDelegate.m in Sources */,
 				4A41EE2F1F5955AF0090E20F /* MDLTools.m in Sources */,
 				4A41EE281F5949A40090E20F /* MDLTraceManager.m in Sources */,
@@ -503,7 +514,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				4A75D40B1F443C050063C74D /* MDLIOCContext.m in Sources */,
-				4A75D4241F457F3F0063C74D /* MDLIOCInjector.m in Sources */,
 				4A75D41F1F456C3D0063C74D /* MDLIOCBean.m in Sources */,
 				4A8E8E8E1F3C084E006E5953 /* MonkeyDLuffyTests.m in Sources */,
 				4A08EB871F4AFAE200DB41AE /* MDLIOCTestModel.m in Sources */,
@@ -560,7 +570,6 @@
 /* Begin XCBuildConfiguration section */
 		4A8E8E9B1F3C084E006E5953 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 64E246634DA78A054D7EBF88 /* Pods-MonkeyDLuffy.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -610,7 +619,6 @@
 		};
 		4A8E8E9C1F3C084E006E5953 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 44BE552FEC24C7840AD4F305 /* Pods-MonkeyDLuffy.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -654,7 +662,7 @@
 		};
 		4A8E8E9E1F3C084E006E5953 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 64E246634DA78A054D7EBF88 /* Pods-MonkeyDLuffy.debug.xcconfig */;
+			baseConfigurationReference = C415A025EA6AAC770E412CB7 /* Pods-MonkeyDLuffy.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = 59B8QAXTFE;
@@ -667,7 +675,7 @@
 		};
 		4A8E8E9F1F3C084E006E5953 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 44BE552FEC24C7840AD4F305 /* Pods-MonkeyDLuffy.release.xcconfig */;
+			baseConfigurationReference = 299E949CE77DD72B3EE4A63E /* Pods-MonkeyDLuffy.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = 59B8QAXTFE;
@@ -680,7 +688,6 @@
 		};
 		4A8E8EA11F3C084E006E5953 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 64E246634DA78A054D7EBF88 /* Pods-MonkeyDLuffy.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				DEVELOPMENT_TEAM = 59B8QAXTFE;
@@ -694,7 +701,6 @@
 		};
 		4A8E8EA21F3C084E006E5953 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 44BE552FEC24C7840AD4F305 /* Pods-MonkeyDLuffy.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				DEVELOPMENT_TEAM = 59B8QAXTFE;
@@ -708,7 +714,6 @@
 		};
 		4A8E8EA41F3C084E006E5953 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 64E246634DA78A054D7EBF88 /* Pods-MonkeyDLuffy.debug.xcconfig */;
 			buildSettings = {
 				DEVELOPMENT_TEAM = 59B8QAXTFE;
 				INFOPLIST_FILE = MonkeyDLuffyUITests/Info.plist;
@@ -721,7 +726,6 @@
 		};
 		4A8E8EA51F3C084E006E5953 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 44BE552FEC24C7840AD4F305 /* Pods-MonkeyDLuffy.release.xcconfig */;
 			buildSettings = {
 				DEVELOPMENT_TEAM = 59B8QAXTFE;
 				INFOPLIST_FILE = MonkeyDLuffyUITests/Info.plist;

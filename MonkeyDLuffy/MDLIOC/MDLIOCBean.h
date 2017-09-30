@@ -1,5 +1,5 @@
 //
-//  MDLIOCModule.h
+//  MDLIOCBeanFactory.h
 //  MonkeyDLuffy
 //
 //  Created by Duanww on 2017/8/17.
@@ -8,55 +8,131 @@
 
 #import <Foundation/Foundation.h>
 
-//注入对象作用范围
-typedef NS_ENUM(NSInteger, MDLIOCScope) {
-    MDLIOCScopeNormal,  //正常的作用范围，每次使用时都重新创建
-    MDLIOCScopeModule,  //模块作用范围，跟模块的生命周期相关
-    MDLIOCScopeGlobal,  //全局作用范围，创建以后会常驻内存
+/**
+ IOC束协议，继承该协议，标识注入bean时使用bean束，实现对bean束的调用，会轮流调用所有已注册的该协议的实现对象
+ */
+@protocol MDLIOCBundle
+
+@end
+
+//判断该协议是否使用bean束
+extern inline BOOL ProtocolIsBundleBean (Protocol *protocol);
+
+//注入对象缓存策略
+typedef NS_ENUM(NSInteger, MDLIOCCachePolicy) {
+    MDLIOCCachePolicyNone,      //不缓存，每次使用时都重新创建
+    MDLIOCCachePolicyCache,     //缓存，如果不清理则创建以后会一直存在
 };
 
+#pragma mark - 可注入协议
+
 /**
- IOC注入描述对象，在该类中设置关联协议、实现类、以及注入对象作用范围等信息
+ 可注入协议，依赖注入的对象必须实现此协议
+ */
+@protocol MDLInjectable <NSObject>
+
+/**
+ @return 依赖注入的属性集合
+ */
++ (NSSet *)mdlioc_injectableProperties;
+
+@end
+
+/**
+ IOC注入描述类，在该类中设置关联协议、实现类、以及缓存策略等信息
  */
 @interface MDLIOCBean : NSObject
 //关联的协议
 @property (nonatomic, strong, readonly) Protocol *protocol;
 //绑定的实现类
 @property (nonatomic, strong, readonly) Class bindClass;
-//作用域
-@property (nonatomic, assign, readonly) MDLIOCScope scope;
-//模块名称，作用域为scope时设置
-@property (nonatomic, copy) NSString *moduleName;
+//缓存策略
+@property (nonatomic, assign, readonly) MDLIOCCachePolicy cachePolicy;
+//别名
+@property (nonatomic, strong, readonly) NSString *alias;
 
-#pragma mark - Bean初始化方法
+- (instancetype)initWithProtocol:(Protocol *)aProtocol bindClass:(Class)bindClass cachePolicy:(MDLIOCCachePolicy)cachePolicy alias:(NSString *)alias;
 
-- (instancetype)initWithProtocol:(Protocol *)aProtocol bindClass:(Class)bindClass scope:(MDLIOCScope)scope;
++ (instancetype)beanWithProtocol:(Protocol *)aProtocol bindClass:(Class)bindClass cachePolicy:(MDLIOCCachePolicy)cachePolicy alias:(NSString *)alias;
 
-+ (instancetype)beanWithProtocol:(Protocol *)aProtocol bindClass:(Class)bindClass scope:(MDLIOCScope)scope;
+/**
+ Bean的唯一标识
+ */
+- (NSString *)beanKey;
 
-- (instancetype)moduleBeanWithProtocol:(Protocol *)aProtocol bindClass:(Class)bindClass moduleName:(NSString *)moduleName;
+/**
+ 通过协议和别名获取Bean的唯一标识
+ @param aProtocol 协议
+ @param alias 别名
+ @return bean的唯一标识
+ */
++ (NSString *)beanKeyForProtocol:(Protocol *)aProtocol alias:(NSString *)alias;
 
-+ (instancetype)moduleBeanWithProtocol:(Protocol *)aProtocol bindClass:(Class)bindClass moduleName:(NSString *)moduleName;
+/**
+ 是否是Bean束
+ @return YES为Bean束，否则NO
+ */
+- (BOOL)isBundleBean;
 
 @end
 
-#pragma mark - IOC注入对象提供者协议
+@interface MDLIOCBeanKey : NSObject<NSCopying>
+
+@property (nonatomic, strong) Protocol *protocol;
+
+@property (nonatomic, strong) NSString *alias;
+
+@property (nonatomic, strong) NSString *factoryName;
+
+- (instancetype)beanKeyWithProtocol:(Protocol *)aProtocol alias:(NSString *)alias;
+
+@end
+
+#pragma mark - IOC模块协议
 
 /**
- IOC注入对象提供者协议，个业务模块可对应一个或多个注入对象提供者
+ IOCBean工厂，通常一个业务模块对应一个IOCBean工厂
  */
-@protocol MDLIOCProvider <NSObject>
-
-/**
- 创建关联对象
- @return 关联对象集合
- */
-+ (NSArray<MDLIOCBean *> *)buildBeans;
+@protocol MDLIOCBeanFactory
 
 /**
  模块名称，默认使用当前对象的类名作为模块名称
  @return 模块名称
  */
-+ (NSString *)moduleName;
++ (NSString *)factoryName;
+
+/**
+ 进入工厂，可多次调用，因为每个工厂可能有多个入口，只有第一次进入时会注册该工厂下所有的注入对象
+ */
++ (void)enterFactory;
+
+/**
+ 退出工厂，可多次调用，因为每个工厂可能有多个出口，只有最后一次退出时会注销该工厂下所有的注入对象
+ */
++ (void)exitFactory;
+
+@optional
+
+/**
+ 注入依赖对象集合
+ @return 注入依赖对象集合
+ */
++ (NSArray<MDLIOCBean *> *)beans;
+
+/**
+ 有别名的注入依赖对象集合
+ @return 注入依赖对象集合
+ */
++ (NSDictionary<NSString *, MDLIOCBean *> *)aliasBeans;
+
+
++ (NSArray<MDLIOCBean *> *)bunldeBean;
+
+@end
+
+/**
+ 注册IOC依赖对象模块抽象实现类，buildBeans方法必须重载
+ */
+@interface MDLIOCBeanFactoryAbstract : NSObject<MDLIOCBeanFactory>
 
 @end

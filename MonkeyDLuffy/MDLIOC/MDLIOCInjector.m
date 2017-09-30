@@ -1,203 +1,221 @@
 //
-//  MDLIOCInjector.m
+//  MDLIOCRegister.m
 //  MonkeyDLuffy
 //
-//  Created by Duanww on 2017/8/17.
+//  Created by Duanww on 2017/9/18.
 //  Copyright © 2017年 Duanww. All rights reserved.
 //
 
 #import "MDLIOCInjector.h"
-#import <objc/runtime.h>
 #import "MDLIOCContext.h"
+#import <libkern/OSAtomic.h>
+#import <objc/runtime.h>
 
-//协议对象生成Key
-static NSString * ProtocolKeyForProtocol(Protocol *aProtocol) {
-    return [NSString stringWithFormat:@"<%@>",NSStringFromProtocol(aProtocol)];
+static MDLIOCContext *iocContext = nil;
+static NSMutableDictionary<NSString *, NSMutableArray<MDLIOCBean *> *> *factoryBeans;//工厂下面所有的bean，{工厂名称:[bean]}
+
+static void mdl_performLocked(dispatch_block_t block) {
+    static OSSpinLock mdl_lock = OS_SPINLOCK_INIT;
+    OSSpinLockLock(&mdl_lock);
+    block();
+    OSSpinLockUnlock(&mdl_lock);
 }
+
+static inline NSString * factoryNameWithFactory(Class<MDLIOCBeanFactory> factory) {
+    return factory ? NSStringFromClass(factory) : nil;
+}
+
+@implementation MDLIOCRegister
+
++ (void)load {
+    iocContext = [[MDLIOCContext alloc] init];
+    factoryBeans = [[NSMutableDictionary<NSString *, NSMutableArray<MDLIOCBean *> *> alloc] init];
+}
+
+/**
+ 将Bean与工厂关联起来
+ @param bean IOC注入描述对象
+ @param factoryName 所属工厂名称
+ */
++ (void)addBean:(MDLIOCBean *)bean forFactoryName:(NSString *)factoryName {
+    NSMutableArray *beansOfFactory = [factoryBeans objectForKey:factoryName];//工厂下面的Bean
+    if (!beansOfFactory) {
+        beansOfFactory = [NSMutableArray array];
+        factoryBeans[factoryName] = beansOfFactory;
+    }
+    [beansOfFactory addObject:bean];
+}
+
+/**
+ 将Bean与工厂关联起来
+ @param beans IOC注入描述对象数组
+ @param factoryName 所属工厂名称
+ */
++ (void)addBeans:(NSArray *)beans forFactoryName:(NSString *)factoryName {
+    NSMutableArray *beansOfFactory = [factoryBeans objectForKey:factoryName];//工厂下面的Bean
+    if (!beansOfFactory) {
+        beansOfFactory = [NSMutableArray array];
+        factoryBeans[factoryName] = beansOfFactory;
+    }
+    [beansOfFactory addObjectsFromArray:beans];
+}
+
++ (void)registerBean:(MDLIOCBean * __nonnull)bean fromFactory:(Class<MDLIOCBeanFactory> __nullable)factory {
+    NSParameterAssert(bean);
+    
+    mdl_performLocked(^{
+        [iocContext registerBean:bean forKey:[bean beanKey]];
+        
+        if (factory) {
+            [self addBean:bean forFactoryName:factoryNameWithFactory(factory)];
+        }
+    });
+}
+
++ (void)registerBean:(MDLIOCBean * __nonnull)bean {
+    [self registerBean:bean fromFactory:nil];
+}
+
++ (void)registerBeans:(NSArray * __nonnull)beans fromFactory:(Class<MDLIOCBeanFactory> __nullable)factory {
+    NSParameterAssert(beans);
+    
+    mdl_performLocked(^{
+        for (MDLIOCBean *bean in beans) {
+            [iocContext registerBean:bean forKey:[bean beanKey]];
+        }
+        if (factory) {
+            [self addBeans:beans forFactoryName:factoryNameWithFactory(factory)];
+        }
+    });
+}
+
++ (void)registerProtocol:(Protocol * __nonnull)protocol
+                   clazz:(Class __nonnull)clazz
+             cachePolicy:(MDLIOCCachePolicy)cachePolicy
+                   alias:(NSString * __nullable)alias
+             fromFactory:(Class<MDLIOCBeanFactory> __nullable)factory {
+    
+    mdl_performLocked(^{
+        MDLIOCBean *bean = [MDLIOCBean beanWithProtocol:protocol bindClass:clazz cachePolicy:cachePolicy alias:alias];
+        [iocContext registerBean:bean forKey:[bean beanKey]];
+        if (factory) {
+            [self addBean:bean forFactoryName:factoryNameWithFactory(factory)];
+        }
+    });
+}
+
++ (void)registerProtocol:(Protocol * __nonnull)protocol
+                   clazz:(Class __nonnull)clazz
+             cachePolicy:(MDLIOCCachePolicy)cachePolicy
+             fromFactory:(Class<MDLIOCBeanFactory> __nullable)factory {
+    [self registerProtocol:protocol clazz:clazz cachePolicy:cachePolicy alias:nil fromFactory:factory];
+}
+
++ (void)registerProtocol:(Protocol * __nonnull)protocol
+                   clazz:(Class __nonnull)clazz
+             cachePolicy:(MDLIOCCachePolicy)cachePolicy {
+    [self registerProtocol:protocol clazz:clazz cachePolicy:cachePolicy alias:nil fromFactory:Nil];
+}
+
++ (void)registerProtocol:(Protocol * __nonnull)protocol
+                   clazz:(Class __nonnull)clazz {
+    [self registerProtocol:protocol clazz:clazz cachePolicy:MDLIOCCachePolicyNone alias:nil fromFactory:Nil];
+}
+
++ (void)unRegisterAllFromFactory:(Class<MDLIOCBeanFactory> __nonnull)factory {
+    NSParameterAssert(factory);
+    
+    mdl_performLocked(^{
+        NSString *factoryName = factoryNameWithFactory(factory);
+        NSArray *beans = [factoryBeans objectForKey:factoryName];
+        if (beans) {
+            [iocContext unRegisterBeans:beans];
+            [factoryBeans removeObjectForKey:factoryName];
+        }
+    });
+}
+
+@end
+
+@implementation MDLIOCGetter
+
++ (id __nullable)instanceForProtocol:(Protocol * __nonnull)protocol alias:(NSString * __nullable)alias {
+    NSParameterAssert(protocol);
+    
+    __block id obj = nil;
+    mdl_performLocked(^{
+        obj = [iocContext instanceForKey:[MDLIOCBean beanKeyForProtocol:protocol alias:alias] beanBunlde:ProtocolIsBundleBean(protocol)];
+    });
+    return obj;
+}
+
++ (id __nullable)instanceForProtocol:(Protocol * __nonnull)protocol {
+    return [self instanceForProtocol:protocol alias:nil];
+}
+
+@end
+
+@interface NSObject (IOC)
+
+//对象是否已经注入了依赖对象
+@property (nonatomic, assign) BOOL isInjected;
+
+@end
+
+@implementation NSObject (IOC)
+
+- (BOOL)isInjected {
+    return [objc_getAssociatedObject(self, _cmd) boolValue];
+}
+
+- (void)setIsInjected:(BOOL)isInjected {
+    objc_setAssociatedObject(self, @selector(isInjected), @(isInjected), OBJC_ASSOCIATION_RETAIN);
+}
+
+@end
 
 @implementation NSObject (MDLIOCInjector)
 
 - (void)mdlioc_injector {
     if (![self respondsToSelector:@selector(mdlioc_injectableProperties)]) {
         @throw [NSException exceptionWithName:@"MDLIOCInjectorException" reason:@"object must conforms protocol MDLInjectable!" userInfo:nil];
-        return;
     }
-    [[MDLIOCInjector sharedInstance] injector:(id<MDLInjectable>)self];
+    [MDLIOCInjector injector:(NSObject<MDLInjectable> *)self];
 }
 
 @end
 
-@implementation MDLIOCInjector {
-    MDLIOCContext *_iocContext;
+@implementation MDLIOCInjector
+
++ (void)injector:(NSObject<MDLInjectable> * __nonnull)obj {
     
-    NSMutableDictionary<NSString *, NSNumber *> *_moduleLifeCycle;
-    NSMutableDictionary<NSString *, NSMutableArray<NSString *> *> *_procotolsOfModule;
-    NSHashTable<NSObject<MDLInjectable> *> *_uniqueInjection;
-    
-    NSLock *_moduleLock;
-}
-
-+(instancetype)sharedInstance {
-    static id instance = nil;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        instance = [[self alloc] init];
-    });
-    return instance;
-}
-
-static NSMutableArray * _annotationRegisterBeans = nil;
-
-+ (void)load {
-    _annotationRegisterBeans = [[NSMutableArray alloc] init];
-}
-
-+ (void)annotationRegisterBean:(MDLIOCBean *)bean {
-    [_annotationRegisterBeans addObject:bean];
-    NSLog(@"annotation register %@",bean);
-}
-
--(instancetype)init {
-    if (self = [super init]) {
-        _iocContext = [[MDLIOCContext alloc] init];
-        
-        _moduleLifeCycle = [[NSMutableDictionary<NSString *, NSNumber *> alloc] init];
-        _procotolsOfModule = [[NSMutableDictionary<NSString *, NSMutableArray<NSString *> *> alloc] init];
-        _uniqueInjection = [NSHashTable<NSObject<MDLInjectable> *> weakObjectsHashTable];
-        
-        _moduleLock = [[NSLock alloc] init];
-        
-        [self _loadAnnotationRegisterBeans];
-    }
-    return self;
-}
-
-- (void)resetContext {
-    [_moduleLock lock];
-    _iocContext = [[MDLIOCContext alloc] init];
-    [_moduleLock unlock];
-}
-
-- (void)_loadAnnotationRegisterBeans {
-    [_moduleLock lock];
-    for (MDLIOCBean *bean in _annotationRegisterBeans) {
-        _iocContext[ProtocolKeyForProtocol(bean.protocol)] = bean;
-        NSLog(@"register at init method %@",bean);
-    }
-    [_moduleLock unlock];
-    [_annotationRegisterBeans removeAllObjects];
-    _annotationRegisterBeans = nil;
-}
-
-- (NSDictionary *)cachesWithScope:(MDLIOCScope)scope {
-    [_moduleLock lock];
-    NSDictionary *result = [_iocContext cachesWithScope:scope];
-    [_moduleLock unlock];
-    return result;
-}
-
-- (NSDictionary *)allBeans {
-    [_moduleLock lock];
-    NSDictionary *result = [_iocContext allBeans];
-    [_moduleLock unlock];
-    return result;
-}
-
-#pragma mark - 获取已注册的依赖对象
-
-- (id)instanceForProtocol:(Protocol *)protocol {
-    return [self _instanceForProtocolKey:ProtocolKeyForProtocol(protocol)];
-}
-
-- (id)_instanceForProtocolKey:(NSString *)protocolKey {
-    [_moduleLock lock];
-    id result = [_iocContext instanceForKey:protocolKey];
-    [_moduleLock unlock];
-    return result;
-}
-
-#pragma mark - 注册依赖对象
-
-- (void)loadIOCInstanceFromProviders:(NSArray<NSString *> *)providerClassNames {
-    if ([providerClassNames count] == 0) {
-        return;
-    }
-    
-    [_moduleLock lock];
-    for (NSString *providerClassName in providerClassNames) {
-        Class<MDLIOCProvider> provider= NSClassFromString(providerClassName);//IOC注入对象提供类
-        NSString *moduleName = [provider moduleName];//模块名称        
-        for (MDLIOCBean *bean in [provider buildBeans]) {
-            bean.moduleName = moduleName;
-            _iocContext[ProtocolKeyForProtocol(bean.protocol)] = bean;
-        }
-    }
-    [_moduleLock unlock];
-}
-
-- (void)registerBean:(MDLIOCBean *)bean {
-    NSString *protocolKey = ProtocolKeyForProtocol(bean.protocol);
-    if ([self _isInvalidRegister:bean.bindClass protocolKey:protocolKey]) {
-        return;
-    }
-    
-    [_moduleLock unlock];
-    _iocContext[protocolKey] = bean;//缓存Bean对象
-    if (bean.scope == MDLIOCScopeModule) {
-        [self _addProtocolKey:protocolKey forModule:bean.moduleName];
-    }
-    [_moduleLock unlock];
-}
-
-//向模块注册一个协议
-- (void)_addProtocolKey:(NSString *)protocolKey forModule:(NSString *)moduleName {
-    NSMutableArray<NSString *> *protocols = _procotolsOfModule[moduleName];
-    if (!protocols) {
-        protocols = [[NSMutableArray<NSString *> alloc] init];
-        _procotolsOfModule[moduleName] = protocols;
-        _moduleLifeCycle[moduleName] = @0;//设置该模块的模块计数为0
-    }
-    [protocols addObject:protocolKey];
-}
-
-//无效的类或者协议返回YES，有效的返回NO
-- (BOOL)_isInvalidRegister:(Class)clazz protocolKey:(NSString *)protocolKey {
-    if (clazz == Nil || protocolKey == nil) {
-        @throw [NSException exceptionWithName:@"MDLIOCInjectorException" reason:@"Invalid Parameters!" userInfo:nil];
-        return YES;
-    }
-    if (_iocContext[protocolKey]) {
-        @throw [NSException exceptionWithName:@"MDLIOCInjectorException" reason:[NSString stringWithFormat:@"%@ has already registered", protocolKey] userInfo:nil];
-        return YES;
-    }
-    return NO;
-}
-
-#pragma mark - 依赖注入
-
-- (void)injector:(NSObject<MDLInjectable> *)obj {
     Class clazz = [obj class];
     if ([clazz respondsToSelector:@selector(mdlioc_injectableProperties)]) {
-        if ([_uniqueInjection containsObject:obj]) {//不进行重复注入
-            return;
-        }
-        
-        NSSet *properties = [clazz mdlioc_injectableProperties];//需要注入的属性集合
-        NSMutableDictionary *propertiesDictionary = [NSMutableDictionary dictionaryWithCapacity:properties.count];
-        for (NSString *propertyName in properties) {
-            NSString *protocolKey = [self _getClassOrProtocolForProperty:class_getProperty(clazz, (const char *)[propertyName UTF8String])];//获取属性对应的协议Key
-            id instance = [self _instanceForProtocolKey:protocolKey];//根据协议Key获取对应的实例
-            if ([self _isValidInstance:instance]) {//创建的对象是否有效
+        mdl_performLocked(^{
+            if (obj.isInjected) {//不进行重复注入
+                return;
+            }
+            
+            NSSet *properties = [clazz mdlioc_injectableProperties];//需要注入的属性集合
+            NSMutableDictionary *propertiesDictionary = [NSMutableDictionary dictionaryWithCapacity:properties.count];//保存KVC数据字典
+            for (NSString *propertyName in properties) {
+                NSString *protocol = [self _getClassOrProtocolForProperty:class_getProperty(clazz, (const char *)[propertyName UTF8String])];//获取属性对应的协议名称
+                id instance = [MDLIOCGetter instanceForProtocol:NSProtocolFromString(protocol) alias:nil];//根据协议Key获取对应的实例
                 propertiesDictionary[propertyName] = instance;
             }
-        }
-        [obj setValuesForKeysWithDictionary:propertiesDictionary];
-        [_uniqueInjection addObject:obj];
-        NSLog(@"%@依赖注入：%@",NSStringFromClass(clazz), propertiesDictionary);
+            [obj setValuesForKeysWithDictionary:propertiesDictionary];//KVC设置属性值
+            
+            obj.isInjected = YES;
+        });
     }
 }
 
-- (NSString *)_getClassOrProtocolForProperty:(objc_property_t)property {
+/**
+ 获取属性对应的协议名称
+ @param property 属性结构体
+ @return 实现的协议名称
+ */
++ (NSString *)_getClassOrProtocolForProperty:(objc_property_t)property {
     const char *attributes = property_getAttributes(property);
     char buffer[1 + strlen(attributes)];
     strcpy(buffer, attributes);
@@ -212,56 +230,6 @@ static NSMutableArray * _annotationRegisterBeans = nil;
         }
     }
     return nil;
-}
-
-- (BOOL)_isValidInstance:(id)instance {
-    if (!instance) {
-        @throw [NSException exceptionWithName:@"MDLIOCInjectorException" reason:[NSString stringWithFormat:@"Invalid class %@", NSStringFromClass([instance class])] userInfo:nil];
-        return NO;
-    }
-    return YES;
-}
-
-#pragma mark - 模块生命周期管理
-
-- (void)enterModule:(NSString *)moduleName {
-    [_moduleLock lock];
-    NSNumber *lifeCycle = _moduleLifeCycle[moduleName];
-    if (lifeCycle) {
-        int moduleRetainCount = [lifeCycle intValue] + 1;
-        _moduleLifeCycle[moduleName] = @(moduleRetainCount);
-        if (moduleRetainCount == 1) {//第一次进入
-            [self _createInstanceOnModuleFirstEnter:moduleName];
-        }
-    }
-    [_moduleLock unlock];
-}
-
-- (void)exitModule:(NSString *)moduleName {
-    [_moduleLock lock];
-    NSNumber *lifeCycle = _moduleLifeCycle[moduleName];
-    if (lifeCycle) {
-        int moduleRetainCount = [lifeCycle intValue] - 1;
-        _moduleLifeCycle[moduleName] = @(moduleRetainCount);
-        if (moduleRetainCount == 0) {//最后一次退出
-            [self _releaseInstanceOnModuleLastExit:moduleName];
-        }
-    }
-    [_moduleLock unlock];
-}
-
-//模块第一次进入时，创建该模块下对应的注入对象
-- (void)_createInstanceOnModuleFirstEnter:(NSString *)moduleName {
-    NSArray *protocols = [_procotolsOfModule objectForKey:moduleName];//获取该模块下所有注册的协议
-    [_iocContext batchCreateModuleInstanceForKeys:protocols];
-}
-
-//模块最后一次退出时，释放该模块下对应的注入对象
-- (void)_releaseInstanceOnModuleLastExit:(NSString *)moduleName {
-    NSArray *protocols = [_procotolsOfModule objectForKey:moduleName];
-    if (protocols) {
-        [_iocContext batchRemoveModuleInstanceForKeys:protocols];
-    }
 }
 
 @end

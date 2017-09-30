@@ -41,6 +41,7 @@
     NSHashTable<MDLTrace *> *_traceRecords;
     MDLTraceConfig *_config;
     int _fileSize;
+    dispatch_queue_t _writeQueue;
 }
 
 +(instancetype)sharedInstance {
@@ -58,7 +59,7 @@
     if (self) {
         _traceRecords = [NSHashTable<MDLTrace *> weakObjectsHashTable];
         _config = [[MDLTraceConfig alloc] init];
-        
+        _writeQueue = dispatch_queue_create("com.duan.mdltrace.queue", nil);
         [self _createFile];
     }
     return self;
@@ -78,17 +79,19 @@
 
 - (void)_writeData:(NSData *)data {
     if ([data length] > 0) {
-        NSFileHandle *traceHandle = [NSFileHandle fileHandleForUpdatingAtPath:_currentTraceFile];
-        [traceHandle seekToEndOfFile];
-        [traceHandle writeData:data];
-        [traceHandle closeFile];
-        
-        _fileSize += [data length];
-        
-        if (_fileSize > MAX_FILE_SIZE) {
-            [self _createFile];
-            [self _uploadDataAtPath:[_currentTraceFile copy]];
-        };
+        dispatch_async(_writeQueue, ^{
+            NSFileHandle *traceHandle = [NSFileHandle fileHandleForUpdatingAtPath:_currentTraceFile];
+            [traceHandle seekToEndOfFile];
+            [traceHandle writeData:data];
+            [traceHandle closeFile];
+            
+            _fileSize += [data length];
+            
+            if (_fileSize > MAX_FILE_SIZE) {
+                [self _createFile];
+                [self _uploadDataAtPath:[_currentTraceFile copy]];
+            };
+        });
     }
 }
 
