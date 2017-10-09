@@ -10,8 +10,6 @@
 
 @implementation Lufei
 
-@BeeHiveService(HaizeiProtocol,Lufei)
-
 - (void)fight {
     NSLog(@"我是路飞，看我的橡胶机关枪");
 }
@@ -263,9 +261,47 @@ mdlioc_annotation_register(@protocol(Board), MDLIOCCachePolicyCache, nil)
 @implementation TestFactory
 
 + (NSArray<MDLIOCBean *> *)buildBeans {
-    return @[[MDLIOCBean beanWithProtocol:@protocol(Board) bindClass:[MaliHao class] cachePolicy:0 alias:@"meili"],
-             [MDLIOCBean beanWithProtocol:@protocol(Board) bindClass:[HuangjinMaliHao class] cachePolicy:0 alias:@"huangjinmeili"]
+    return @[[MDLIOCBean beanWithProtocol:@protocol(HaizeiProtocol) bindClass:[Lufei class] cachePolicy:MDLIOCCachePolicyNone alias:nil],
+             [MDLIOCBean beanWithProtocol:@protocol(HaiJunProtocol) bindClass:[Chiquan class] cachePolicy:MDLIOCCachePolicyNone alias:nil],
+             [MDLIOCBean beanWithProtocol:@protocol(ZhanChangProtocol) bindClass:[MaLinFuDuo class] cachePolicy:MDLIOCCachePolicyNone alias:nil],
+             [MDLIOCBean beanWithProtocol:@protocol(JieGuoProtocol) bindClass:[BaiHuziDie class] cachePolicy:MDLIOCCachePolicyNone alias:nil]
              ];
+}
+
+@end
+
+@implementation FireDevilNut
+
+- (void)eat {
+    NSLog(@"吃下烧烧果实");
+}
+
+- (NSString *)description {
+    return [NSString stringWithFormat:@"<%p> 烧烧果实", self];
+}
+
+@end
+
+@implementation RubberDevilNut
+
+- (void)eat {
+    NSLog(@"吃下橡胶果实");
+}
+
+- (NSString *)description {
+    return [NSString stringWithFormat:@"<%p> 橡胶果实", self];
+}
+
+@end
+
+@implementation DarkDevilNut
+
+- (void)eat {
+    NSLog(@"吃下暗暗果实");
+}
+
+- (NSString *)description {
+    return [NSString stringWithFormat:@"<%p> 暗暗果实", self];
 }
 
 @end

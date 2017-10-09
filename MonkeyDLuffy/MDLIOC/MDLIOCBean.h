@@ -59,6 +59,8 @@ typedef NS_ENUM(NSInteger, MDLIOCCachePolicy) {
 
 + (instancetype)beanWithProtocol:(Protocol *)aProtocol bindClass:(Class)bindClass cachePolicy:(MDLIOCCachePolicy)cachePolicy alias:(NSString *)alias;
 
++ (instancetype)beanWithProtocol:(Protocol *)aProtocol bindClass:(Class)bindClass;
+
 /**
  Bean的唯一标识
  */
@@ -108,9 +110,5 @@ typedef NS_ENUM(NSInteger, MDLIOCCachePolicy) {
  注册IOC依赖对象模块抽象实现类，buildBeans方法必须重载
  */
 @interface MDLIOCBeanFactoryAbstract : NSObject<MDLIOCBeanFactory>
-
-+ (int)enterCount;
-
-+ (void)setEnterCount:(int)count;
 
 @end

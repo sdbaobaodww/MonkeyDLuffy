@@ -18,7 +18,7 @@
 /**
  @return 所有的注入Bean
  */
-- (NSDictionary * __nonnull)allBeans;
+- (NSArray<MDLIOCBean *> * __nonnull)allBeans;
 
 /**
  注册IOCBean，有3种使用类型：

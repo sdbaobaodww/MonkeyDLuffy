@@ -13,6 +13,13 @@
 
 static MDLIOCContext *iocContext = nil;//ioc容器上下文
 static NSMutableDictionary<NSString *, NSMutableArray<MDLIOCBean *> *> *factoryBeans;//工厂下面所有的bean，{工厂名称:[bean]}
+static void _init_context () {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        iocContext = [[MDLIOCContext alloc] init];
+        factoryBeans = [[NSMutableDictionary<NSString *, NSMutableArray<MDLIOCBean *> *> alloc] init];
+    });
+}
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
@@ -31,8 +38,11 @@ static inline NSString * factoryNameWithFactory(Class<MDLIOCBeanFactory> factory
 @implementation MDLIOCRegister
 
 + (void)load {
-    iocContext = [[MDLIOCContext alloc] init];
-    factoryBeans = [[NSMutableDictionary<NSString *, NSMutableArray<MDLIOCBean *> *> alloc] init];
+    _init_context();
+}
+
++ (void)initialize {
+    _init_context();
 }
 
 /**
@@ -146,6 +156,20 @@ static inline NSString * factoryNameWithFactory(Class<MDLIOCBeanFactory> factory
     return isEntered;
 }
 
++ (NSArray<MDLIOCBean *> * __nullable)allRegistedBeans {
+    __block NSArray<MDLIOCBean *> *beans = nil;
+    mdl_performLocked(^{
+        beans = [iocContext allBeans];
+    });
+    return beans;
+}
+
++ (void)cleanAllBeans {
+    mdl_performLocked(^{
+        iocContext = [[MDLIOCContext alloc] init];
+    });
+}
+
 @end
 
 @implementation MDLIOCGetter
@@ -168,8 +192,7 @@ static inline NSString * factoryNameWithFactory(Class<MDLIOCBeanFactory> factory
 
 @interface NSObject (IOC)
 
-//对象是否已经注入了依赖对象
-@property (nonatomic, assign) BOOL isInjected;
+@property (nonatomic, assign) BOOL isInjected;//对象是否已经注入了依赖对象
 
 @end
 
@@ -198,9 +221,10 @@ static inline NSString * factoryNameWithFactory(Class<MDLIOCBeanFactory> factory
             NSSet *properties = [clazz mdlioc_injectableProperties];//需要注入的属性集合
             NSMutableDictionary *propertiesDictionary = [NSMutableDictionary dictionaryWithCapacity:properties.count];//保存KVC数据字典
             for (NSString *propertyName in properties) {
-                NSString *protocol = [self _getClassOrProtocolForProperty:class_getProperty(clazz, (const char *)[propertyName UTF8String])];//获取属性对应的协议名称
-                id instance = [MDLIOCGetter instanceForProtocol:NSProtocolFromString(protocol) alias:nil];//根据协议Key获取对应的实例
-                propertiesDictionary[propertyName] = instance;
+                //获取属性对应的协议
+                Protocol *protocol = NSProtocolFromString([self _getClassOrProtocolForProperty:class_getProperty(clazz, (const char *)[propertyName UTF8String])]);
+                //根据协议Key获取对应的实例
+                propertiesDictionary[propertyName] = [iocContext instanceForKey:[MDLIOCBean beanKeyForProtocol:protocol alias:nil] beanBunlde:ProtocolIsBundleBean(protocol)];
             }
             [obj setValuesForKeysWithDictionary:propertiesDictionary];//KVC设置属性值
             
@@ -225,7 +249,7 @@ static inline NSString * factoryNameWithFactory(Class<MDLIOCBeanFactory> factory
             if (strlen(attribute) <= 4) {
                 break;
             }
-            return [[NSString alloc] initWithBytes:attribute + 3 length:strlen(attribute) - 4 encoding:NSASCIIStringEncoding];
+            return [[NSString alloc] initWithBytes:attribute + 4 length:strlen(attribute) - 6 encoding:NSASCIIStringEncoding];
         }
     }
     return nil;

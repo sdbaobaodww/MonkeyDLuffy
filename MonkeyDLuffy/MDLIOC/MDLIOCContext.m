@@ -26,10 +26,12 @@
     return self;
 }
 
-- (NSDictionary *)allBeans {
-    NSMutableDictionary *dic = [NSMutableDictionary dictionaryWithDictionary:_normalBeans];
-    [dic addEntriesFromDictionary:_bundleBeans];
-    return dic;
+- (NSArray<MDLIOCBean *> *)allBeans {
+    NSMutableArray *beans = [NSMutableArray arrayWithArray:[_normalBeans allValues]];
+    [_bundleBeans enumerateKeysAndObjectsUsingBlock:^(id<NSCopying>  _Nonnull key, NSMutableArray<MDLIOCBean *> * _Nonnull obj, BOOL * _Nonnull stop) {
+        [beans addObjectsFromArray:obj];
+    }];
+    return beans;
 }
 
 - (void)registerBean:(MDLIOCBean * __nonnull)bean forKey:(NSString * __nonnull)beanKey {

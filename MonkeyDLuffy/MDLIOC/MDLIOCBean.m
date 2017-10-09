@@ -34,6 +34,10 @@ BOOL ProtocolIsBundleBean (Protocol *protocol) {
     return [[MDLIOCBean alloc] initWithProtocol:aProtocol bindClass:bindClass cachePolicy:cachePolicy alias:alias];
 }
 
++ (instancetype)beanWithProtocol:(Protocol *)aProtocol bindClass:(Class)bindClass {
+    return [[MDLIOCBean alloc] initWithProtocol:aProtocol bindClass:bindClass cachePolicy:MDLIOCCachePolicyNone alias:nil];
+}
+
 - (NSString *)description {
     return [NSString stringWithFormat:@"<%@-%@ cache:%ld>",[self beanKey],NSStringFromClass(_bindClass),(long)_cachePolicy];
 }

@@ -27,15 +27,15 @@
 }
 
 #ifdef PreRegisterFlag
-//测试注解方式注入对象，必须在第一个resetContext方法调用之前，防止数据被清空
+
+//测试注解方式注入对象
 - (void)testAnnotationRegisterBean {
-    MDLIOCInjector *injector = [MDLIOCInjector sharedInstance];
-    NSAssert([[injector allBeans] count] == 2, @"当前依赖的Bean个数为2");
+    NSAssert([[MDLIOCRegister allRegistedBeans] count] == 2, @"当前依赖的Bean个数为2");
     
-    id<YingXiangProtocol> yingxiang = [injector instanceForProtocol:@protocol(YingXiangProtocol)];
+    id yingxiang = [MDLIOCGetter instanceForProtocol:@protocol(YingXiangProtocol)];
     NSAssert([yingxiang class] == [LufeiUp class], @"当前注入的影响是路飞赏金提高");
     
-    id<Board> board = [injector instanceForProtocol:@protocol(Board)];
+    id board = [MDLIOCGetter instanceForProtocol:@protocol(Board)];
     NSAssert([board class] == [MaliHao class], @"当前注入的船是梅里号");
 }
 #endif
@@ -52,163 +52,132 @@
     NSAssert([bigbigEvnetSet count] == 5, @"大大事件依赖注入的属性个数为5");
 }
 
-//测试注册正常作用域Bean
-- (void)testRegisterNormalScopeBean {
-    MDLIOCInjector *injector = [MDLIOCInjector sharedInstance];
-    [injector resetContext];
-   
-    MDLIOCBean *haizeiBean = [MDLIOCBean beanWithProtocol:@protocol(HaizeiProtocol) bindClass:[Lufei class] scope:MDLIOCCachePolicyNone];
-    [injector registerBean:haizeiBean];
+//测试注册Bean
+- (void)testRegisterBean {
+    [MDLIOCRegister cleanAllBeans];
     
-    MDLIOCBean *haijunBean = [MDLIOCBean beanWithProtocol:@protocol(HaiJunProtocol) bindClass:[Chiquan class] scope:MDLIOCCachePolicyNone];
-    [injector registerBean:haijunBean];
+    MDLIOCBean *haizeiBean = [MDLIOCBean beanWithProtocol:@protocol(HaizeiProtocol) bindClass:[Lufei class] cachePolicy:MDLIOCCachePolicyNone alias:nil];
+    [MDLIOCRegister registerBean:haizeiBean];
     
-    MDLIOCBean *zhanchangBean = [MDLIOCBean beanWithProtocol:@protocol(ZhanChangProtocol) bindClass:[MaLinFuDuo class] scope:MDLIOCCachePolicyNone];
-    [injector registerBean:zhanchangBean];
+    MDLIOCBean *haijunBean = [MDLIOCBean beanWithProtocol:@protocol(HaiJunProtocol) bindClass:[Chiquan class] cachePolicy:MDLIOCCachePolicyNone alias:nil];
+    [MDLIOCRegister registerBean:haijunBean];
     
-    MDLIOCBean *jieguoBean = [MDLIOCBean beanWithProtocol:@protocol(JieGuoProtocol) bindClass:[BaiHuziDie class] scope:MDLIOCCachePolicyNone];
-    [injector registerBean:jieguoBean];
+    MDLIOCBean *zhanchangBean = [MDLIOCBean beanWithProtocol:@protocol(ZhanChangProtocol) bindClass:[MaLinFuDuo class] cachePolicy:MDLIOCCachePolicyNone alias:nil];
+    [MDLIOCRegister registerBean:zhanchangBean];
     
-    NSAssert([[injector allBeans] count] == 4, @"当前依赖的Bean个数为4");
+    MDLIOCBean *jieguoBean = [MDLIOCBean beanWithProtocol:@protocol(JieGuoProtocol) bindClass:[BaiHuziDie class] cachePolicy:MDLIOCCachePolicyNone alias:nil];
+    [MDLIOCRegister registerBean:jieguoBean];
     
-    id<HaizeiProtocol> lufei = [injector instanceForProtocol:@protocol(HaizeiProtocol)];
+    MDLIOCBean *yingxiangBean = [MDLIOCBean beanWithProtocol:@protocol(YingXiangProtocol) bindClass:[LufeiUp class] cachePolicy:MDLIOCCachePolicyCache alias:nil];
+    [MDLIOCRegister registerBean:yingxiangBean];
+    
+    NSAssert([[MDLIOCRegister allRegistedBeans] count] == 5, @"当前依赖的Bean个数为5");
+    
+    id<HaizeiProtocol> lufei = [MDLIOCGetter instanceForProtocol:@protocol(HaizeiProtocol)];
     NSAssert([lufei class] == [Lufei class], @"当前注入的海贼是路飞");
     
-    id<HaiJunProtocol> chiquan = [injector instanceForProtocol:@protocol(HaiJunProtocol)];
+    id<HaiJunProtocol> chiquan = [MDLIOCGetter instanceForProtocol:@protocol(HaiJunProtocol)];
     NSAssert([chiquan class] == [Chiquan class], @"当前注入的海军是赤犬");
     
-    id<ZhanChangProtocol> malinfuduo = [injector instanceForProtocol:@protocol(ZhanChangProtocol)];
+    id<ZhanChangProtocol> malinfuduo = [MDLIOCGetter instanceForProtocol:@protocol(ZhanChangProtocol)];
     NSAssert([malinfuduo class] == [MaLinFuDuo class], @"当前注入的战场是马林福多");
     
-    id<JieGuoProtocol> jieguo = [injector instanceForProtocol:@protocol(JieGuoProtocol)];
-    NSAssert([jieguo class] == [BaiHuziDie class], @"当前事件结果是白胡子死了");
+    id<JieGuoProtocol> jieguo1 = [MDLIOCGetter instanceForProtocol:@protocol(JieGuoProtocol)];
+    NSAssert([jieguo1 class] == [BaiHuziDie class], @"当前事件结果是白胡子死了");
     
-    NSAssert([injector cachesWithScope:MDLIOCCachePolicyNone] == nil, @"正常作用域的缓存为nil");
+    id<YingXiangProtocol> yingxiang1 = [MDLIOCGetter instanceForProtocol:@protocol(YingXiangProtocol)];
+    NSAssert([yingxiang1 class] == [LufeiUp class], @"当前影响是路飞赏金变高");
+    
+    id<JieGuoProtocol> jieguo2 = [MDLIOCGetter instanceForProtocol:@protocol(JieGuoProtocol)];
+    NSAssert(jieguo1 != jieguo2, @"未缓存策略每次拿到的对象都不同");
+    
+    id<YingXiangProtocol> yingxiang2 = [MDLIOCGetter instanceForProtocol:@protocol(YingXiangProtocol)];
+    NSAssert(yingxiang1 == yingxiang2, @"缓存策略每次拿到的对象都是同一个");
 }
 
-//测试注册模块作用域Bean
-- (void)testRegisterModuleScopeBean {
-    MDLIOCInjector *injector = [MDLIOCInjector sharedInstance];
-    [injector resetContext];
+//测试通过工厂注册Bean
+- (void)testRegisterBeanFromFactory {
+    [MDLIOCRegister cleanAllBeans];
     
-    MDLIOCBean *haizeiBean = [MDLIOCBean moduleBeanWithProtocol:@protocol(HaizeiProtocol) bindClass:[Lufei class] moduleName:@"module"];
-    [injector registerBean:haizeiBean];
+    NSAssert([[MDLIOCRegister allRegistedBeans] count] == 0, @"当前依赖的Bean个数为0");
     
-    MDLIOCBean *haijunBean = [MDLIOCBean moduleBeanWithProtocol:@protocol(HaiJunProtocol) bindClass:[Chiquan class] moduleName:@"module"];
-    [injector registerBean:haijunBean];
-    
-    MDLIOCBean *zhanchangBean = [MDLIOCBean moduleBeanWithProtocol:@protocol(ZhanChangProtocol) bindClass:[MaLinFuDuo class] moduleName:@"module"];
-    [injector registerBean:zhanchangBean];
-    
-    MDLIOCBean *jieguoBean = [MDLIOCBean moduleBeanWithProtocol:@protocol(JieGuoProtocol) bindClass:[BaiHuziDie class] moduleName:@"module"];
-    [injector registerBean:jieguoBean];
-    
-    NSAssert([[injector allBeans] count] == 4, @"当前依赖的Bean个数为4");
-    
-    id<HaizeiProtocol> lufei = [injector instanceForProtocol:@protocol(HaizeiProtocol)];
+    id<HaizeiProtocol> lufei = [MDLIOCGetter instanceForProtocol:@protocol(HaizeiProtocol)];
     NSAssert(lufei == nil, @"未进入模块前，模块作用域对象不能访问");
     
-    id<HaiJunProtocol> chiquan = [injector instanceForProtocol:@protocol(HaiJunProtocol)];
+    id<HaiJunProtocol> chiquan = [MDLIOCGetter instanceForProtocol:@protocol(HaiJunProtocol)];
     NSAssert(chiquan == nil, @"未进入模块前，模块作用域对象不能访问");
     
-    id<ZhanChangProtocol> malinfuduo = [injector instanceForProtocol:@protocol(ZhanChangProtocol)];
+    id<ZhanChangProtocol> malinfuduo = [MDLIOCGetter instanceForProtocol:@protocol(ZhanChangProtocol)];
     NSAssert(malinfuduo == nil, @"未进入模块前，模块作用域对象不能访问");
     
-    id<JieGuoProtocol> jieguo = [injector instanceForProtocol:@protocol(JieGuoProtocol)];
+    id<JieGuoProtocol> jieguo = [MDLIOCGetter instanceForProtocol:@protocol(JieGuoProtocol)];
     NSAssert(jieguo == nil, @"未进入模块前，模块作用域对象不能访问");
-    
-    NSAssert([[injector cachesWithScope:MDLIOCCachePolicyModule] count] == 0, @"未进入模块前，模块作用域对象不能访问");
     
     //多次进入退出模块
     for (int i = 0; i < 4; i ++) {
-        [injector enterModule:@"module"];
+        [TestFactory enterFactory];
         
-        NSAssert([[injector allBeans] count] == 4, @"当前依赖的Bean个数为4");
+        NSAssert([[MDLIOCRegister allRegistedBeans] count] == 4, @"当前依赖的Bean个数为4");
         
-        lufei = [injector instanceForProtocol:@protocol(HaizeiProtocol)];
+        lufei = [MDLIOCGetter instanceForProtocol:@protocol(HaizeiProtocol)];
         NSAssert([lufei class] == [Lufei class], @"当前注入的海贼是路飞");
         
-        chiquan = [injector instanceForProtocol:@protocol(HaiJunProtocol)];
+        chiquan = [MDLIOCGetter instanceForProtocol:@protocol(HaiJunProtocol)];
         NSAssert([chiquan class] == [Chiquan class], @"当前注入的海军是赤犬");
         
-        malinfuduo = [injector instanceForProtocol:@protocol(ZhanChangProtocol)];
+        malinfuduo = [MDLIOCGetter instanceForProtocol:@protocol(ZhanChangProtocol)];
         NSAssert([malinfuduo class] == [MaLinFuDuo class], @"当前注入的战场是马林福多");
         
-        jieguo = [injector instanceForProtocol:@protocol(JieGuoProtocol)];
+        jieguo = [MDLIOCGetter instanceForProtocol:@protocol(JieGuoProtocol)];
         NSAssert([jieguo class] == [BaiHuziDie class], @"当前事件结果是白胡子死了");
+
+        [TestFactory exitFactory];
         
-        NSAssert([[injector cachesWithScope:MDLIOCCachePolicyModule] count] == 4, @"模块作用域的缓存长度为4");
+        NSAssert([[MDLIOCRegister allRegistedBeans] count] == 0, @"当前依赖的Bean个数为0");
         
-        [injector exitModule:@"module"];
-        
-        NSAssert([[injector allBeans] count] == 4, @"当前依赖的Bean个数为4");
-        
-        lufei = [injector instanceForProtocol:@protocol(HaizeiProtocol)];
+        lufei = [MDLIOCGetter instanceForProtocol:@protocol(HaizeiProtocol)];
         NSAssert(lufei == nil, @"退出模块后，模块作用域对象不能访问");
         
-        chiquan = [injector instanceForProtocol:@protocol(HaiJunProtocol)];
+        chiquan = [MDLIOCGetter instanceForProtocol:@protocol(HaiJunProtocol)];
         NSAssert(chiquan == nil, @"退出模块后，模块作用域对象不能访问");
         
-        malinfuduo = [injector instanceForProtocol:@protocol(ZhanChangProtocol)];
+        malinfuduo = [MDLIOCGetter instanceForProtocol:@protocol(ZhanChangProtocol)];
         NSAssert(malinfuduo == nil, @"退出模块后，模块作用域对象不能访问");
         
-        jieguo = [injector instanceForProtocol:@protocol(JieGuoProtocol)];
+        jieguo = [MDLIOCGetter instanceForProtocol:@protocol(JieGuoProtocol)];
         NSAssert(jieguo == nil, @"退出模块后，模块作用域对象不能访问");
-        
-        NSAssert([[injector cachesWithScope:MDLIOCCachePolicyModule] count] == 0, @"未进入模块前，模块作用域对象不能访问");
     }
 }
 
-- (void)testRegisterGlobalScopeBean {
-    MDLIOCInjector *injector = [MDLIOCInjector sharedInstance];
-    [injector resetContext];
+//测试Bean束
+- (void)testBeanBundle {
+    [MDLIOCRegister cleanAllBeans];
     
-    MDLIOCBean *haizeiBean = [MDLIOCBean beanWithProtocol:@protocol(HaizeiProtocol) bindClass:[Lufei class] scope:MDLIOCCachePolicyCache];
-    [injector registerBean:haizeiBean];
+    [MDLIOCRegister registerBean:[MDLIOCBean beanWithProtocol:@protocol(DevilNut) bindClass:[FireDevilNut class]]];
+    [MDLIOCRegister registerBean:[MDLIOCBean beanWithProtocol:@protocol(DevilNut) bindClass:[RubberDevilNut class]]];
+    [MDLIOCRegister registerBean:[MDLIOCBean beanWithProtocol:@protocol(DevilNut) bindClass:[DarkDevilNut class]]];
     
-    MDLIOCBean *haijunBean = [MDLIOCBean beanWithProtocol:@protocol(HaiJunProtocol) bindClass:[Chiquan class] scope:MDLIOCCachePolicyCache];
-    [injector registerBean:haijunBean];
+    NSAssert([[MDLIOCRegister allRegistedBeans] count] == 3, @"当前依赖的Bean个数为3");
     
-    MDLIOCBean *zhanchangBean = [MDLIOCBean beanWithProtocol:@protocol(ZhanChangProtocol) bindClass:[MaLinFuDuo class] scope:MDLIOCCachePolicyCache];
-    [injector registerBean:zhanchangBean];
+    id devilNut = [MDLIOCGetter instanceForProtocol:@protocol(DevilNut)];
     
-    MDLIOCBean *jieguoBean = [MDLIOCBean beanWithProtocol:@protocol(JieGuoProtocol) bindClass:[BaiHuziDie class] scope:MDLIOCCachePolicyCache];
-    [injector registerBean:jieguoBean];
+    NSAssert([devilNut class] == [MDLProtocolProxy class], @"Bean束返回的对象为协议代理类型");
     
-    NSAssert([[injector allBeans] count] == 4, @"当前依赖的Bean个数为4");
-    
-    id<HaizeiProtocol> lufei = [injector instanceForProtocol:@protocol(HaizeiProtocol)];
-    NSAssert([lufei class] == [Lufei class], @"当前注入的海贼是路飞");
-    
-    id<HaiJunProtocol> chiquan = [injector instanceForProtocol:@protocol(HaiJunProtocol)];
-    NSAssert([chiquan class] == [Chiquan class], @"当前注入的海军是赤犬");
-    
-    id<ZhanChangProtocol> malinfuduo = [injector instanceForProtocol:@protocol(ZhanChangProtocol)];
-    NSAssert([malinfuduo class] == [MaLinFuDuo class], @"当前注入的战场是马林福多");
-    
-    id<JieGuoProtocol> jieguo = [injector instanceForProtocol:@protocol(JieGuoProtocol)];
-    NSAssert([jieguo class] == [BaiHuziDie class], @"当前事件结果是白胡子死了");
-    
-    NSDictionary *dic = [injector cachesWithScope:MDLIOCCachePolicyCache];
-    NSAssert([dic count] == 4, @"当前缓存的全局作用域注册对象为4个");
+    [devilNut eat];
 }
 
 - (void)testPerformanceExample {
     [self measureBlock:^{
         for (int i = 0; i < 100; i ++) {
-            MDLIOCInjector *injector = [MDLIOCInjector sharedInstance];
-            [injector resetContext];
+            [MDLIOCRegister cleanAllBeans];
             
-            [injector registerBean:[MDLIOCBean beanWithProtocol:@protocol(HaizeiProtocol) bindClass:[Lufei class] scope:MDLIOCCachePolicyNone]];
-            [injector registerBean:[MDLIOCBean beanWithProtocol:@protocol(HaiJunProtocol) bindClass:[Chiquan class] scope:MDLIOCCachePolicyNone]];
-            [injector registerBean:[MDLIOCBean beanWithProtocol:@protocol(ZhanChangProtocol) bindClass:[MaLinFuDuo class] scope:MDLIOCCachePolicyNone]];
-            [injector registerBean:[MDLIOCBean beanWithProtocol:@protocol(JieGuoProtocol) bindClass:[BaiHuziDie class] scope:MDLIOCCachePolicyNone]];
-            [injector registerBean:[MDLIOCBean beanWithProtocol:@protocol(YingXiangProtocol) bindClass:[LufeiUp class] scope:MDLIOCCachePolicyNone]];
-            
-            NSAssert([[injector allBeans] count] == 5, @"大大事件依赖注入的属性个数为5");
+            [MDLIOCRegister registerBean:[MDLIOCBean beanWithProtocol:@protocol(HaizeiProtocol) bindClass:[Lufei class]]];
+            [MDLIOCRegister registerBean:[MDLIOCBean beanWithProtocol:@protocol(HaiJunProtocol) bindClass:[Chiquan class]]];
+            [MDLIOCRegister registerBean:[MDLIOCBean beanWithProtocol:@protocol(ZhanChangProtocol) bindClass:[MaLinFuDuo class]]];
+            [MDLIOCRegister registerBean:[MDLIOCBean beanWithProtocol:@protocol(JieGuoProtocol) bindClass:[BaiHuziDie class]]];
+            [MDLIOCRegister registerBean:[MDLIOCBean beanWithProtocol:@protocol(YingXiangProtocol) bindClass:[LufeiUp class]]];
             
             BigBigEvent *bigbigevent = [[BigBigEvent alloc] init];
-            
             [bigbigevent story];
         }
     }];

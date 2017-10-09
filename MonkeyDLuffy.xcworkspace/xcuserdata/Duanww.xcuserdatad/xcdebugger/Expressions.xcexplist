@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VariablesViewState
+   version = "1.0">
+   <ContextStates>
+      <ContextState
+         contextName = "-[AppDelegate application:didFinishLaunchingWithOptions:]:AppDelegate.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "[TestFactory enterCount]">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "-[MDLIOCTest testAnnotationRegisterBean]:MDLIOCTest.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "[MDLIOCRegister allRegistedBeans]">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "-[MDLIOCTest testBeanBundle]:MDLIOCTest.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "[MDLIOCRegister allRegistedBeans]">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "+[MDLIOCRegister allRegistedBeans]:MDLIOCInjector.m">
+      </ContextState>
+   </ContextStates>
+</VariablesViewState>

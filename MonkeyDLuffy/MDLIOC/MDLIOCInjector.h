@@ -86,6 +86,16 @@
  */
 + (BOOL)isFactoryEntered:(Class<MDLIOCBeanFactory> __nonnull)factory;
 
+/**
+ @return 所有已注册的Bean
+ */
++ (NSArray<MDLIOCBean *> * __nullable)allRegistedBeans;
+
+/**
+ 清除所有已注册的Bean
+ */
++ (void)cleanAllBeans;
+
 @end
 
 #pragma mark - IOC获取

@@ -32,11 +32,11 @@
     XCTestExpectation *expect = [self expectationWithDescription:@"异步调用"];
     
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        sleep(5); //延迟两秒向下执行
+        [NSThread sleepForTimeInterval:2.]; ; //延迟两秒向下执行
         [expect fulfill];//告知异步测试结束
     });
     
-    [self waitForExpectationsWithTimeout:3 handler:^(NSError * _Nullable error) {
+    [self waitForExpectationsWithTimeout:5 handler:^(NSError * _Nullable error) {
         [trace1 traceSuccess];
         [trace2 traceSuccess];
         

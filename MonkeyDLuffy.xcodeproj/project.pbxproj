@@ -34,6 +34,7 @@
 		4A8E8E8E1F3C084E006E5953 /* MonkeyDLuffyTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A8E8E8D1F3C084E006E5953 /* MonkeyDLuffyTests.m */; };
 		4A8E8E991F3C084E006E5953 /* MonkeyDLuffyUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A8E8E981F3C084E006E5953 /* MonkeyDLuffyUITests.m */; };
 		4AA1155B1F735A2800EC9184 /* SKBounceAnimation.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AA1155A1F735A2800EC9184 /* SKBounceAnimation.m */; };
+		4AA586231F8B62F50095D65C /* MDLIOCInjector.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A3BB7461F6F74A400DBEB88 /* MDLIOCInjector.m */; };
 		642E19D558F601CA3235BDED /* Pods_MonkeyDLuffy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA11EEA08302D1BBC706DDB8 /* Pods_MonkeyDLuffy.framework */; };
 /* End PBXBuildFile section */
 
@@ -520,6 +521,7 @@
 				4A483F2C1F5D2CFB00B3CC4E /* MDLTraceTest.m in Sources */,
 				4A75D3FF1F442E320063C74D /* MDLRuntimeUtil.m in Sources */,
 				4A1BF67C1F46ECB50006C9DE /* MDLIOCTest.m in Sources */,
+				4AA586231F8B62F50095D65C /* MDLIOCInjector.m in Sources */,
 				4A483F2D1F5D2D6E00B3CC4E /* MDLTrace.m in Sources */,
 				4A483F2E1F5D2D7300B3CC4E /* MDLTraceManager.m in Sources */,
 			);
@@ -570,6 +572,7 @@
 /* Begin XCBuildConfiguration section */
 		4A8E8E9B1F3C084E006E5953 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = C415A025EA6AAC770E412CB7 /* Pods-MonkeyDLuffy.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -619,6 +622,7 @@
 		};
 		4A8E8E9C1F3C084E006E5953 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 299E949CE77DD72B3EE4A63E /* Pods-MonkeyDLuffy.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -688,6 +692,7 @@
 		};
 		4A8E8EA11F3C084E006E5953 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = C415A025EA6AAC770E412CB7 /* Pods-MonkeyDLuffy.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				DEVELOPMENT_TEAM = 59B8QAXTFE;
@@ -701,6 +706,7 @@
 		};
 		4A8E8EA21F3C084E006E5953 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 299E949CE77DD72B3EE4A63E /* Pods-MonkeyDLuffy.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				DEVELOPMENT_TEAM = 59B8QAXTFE;
@@ -714,6 +720,7 @@
 		};
 		4A8E8EA41F3C084E006E5953 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = C415A025EA6AAC770E412CB7 /* Pods-MonkeyDLuffy.debug.xcconfig */;
 			buildSettings = {
 				DEVELOPMENT_TEAM = 59B8QAXTFE;
 				INFOPLIST_FILE = MonkeyDLuffyUITests/Info.plist;
@@ -726,6 +733,7 @@
 		};
 		4A8E8EA51F3C084E006E5953 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 299E949CE77DD72B3EE4A63E /* Pods-MonkeyDLuffy.release.xcconfig */;
 			buildSettings = {
 				DEVELOPMENT_TEAM = 59B8QAXTFE;
 				INFOPLIST_FILE = MonkeyDLuffyUITests/Info.plist;

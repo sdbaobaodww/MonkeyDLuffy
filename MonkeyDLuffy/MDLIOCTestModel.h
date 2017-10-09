@@ -8,7 +8,6 @@
 
 #import <Foundation/Foundation.h>
 #import "MDLIOC.h"
-#import <BeeHive/BeeHive.h>
 
 #define PreRegisterFlag
 
@@ -146,8 +145,29 @@
 
 @end
 
-
+//动画工厂
 @interface TestFactory : MDLIOCBeanFactoryAbstract
 
 @end
 
+//恶魔果实
+@protocol DevilNut <MDLIOCBundle>
+
+- (void)eat;
+
+@end
+
+//烧烧果实
+@interface FireDevilNut : NSObject<DevilNut>
+
+@end
+
+//橡胶果实
+@interface RubberDevilNut : NSObject<DevilNut>
+
+@end
+
+//暗暗果实
+@interface DarkDevilNut : NSObject<DevilNut>
+
+@end

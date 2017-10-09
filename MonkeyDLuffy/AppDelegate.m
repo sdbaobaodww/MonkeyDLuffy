@@ -19,41 +19,8 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    id<YingXiangProtocol> yingxiang = [MDLIOCGetter instanceForProtocol:@protocol(YingXiangProtocol)];
-    id<Board> board = [MDLIOCGetter instanceForProtocol:@protocol(Board)];
-    
-    id<Board,NSObject> board1 = [[WanLiYangGuangHao alloc] init];
-    id<Board,NSObject> board2 = [[MaliHao alloc] init];
-    id<Board,NSObject> board3 = [[HuangjinMaliHao alloc] init];
-    MDLProtocolProxy *proxy = [[MDLProtocolProxy alloc] initWithProtocol:@protocol(Board)];
-    
-    [proxy addProtocolImplWithClass:[board1 class]];
-    [proxy addProtocolImplWithClass:[board2 class]];
-    [proxy addProtocolImplWithClass:[board3 class]];
-    
-    [(id<Board>)proxy fight];
-    [(id<Board>)proxy say:@"向前冲"];
-    [(id<Board>)proxy victor:@"1111" song:@"222"];
-    
-    [TestFactory enterFactory];
-    NSLog(@"enterCount:%d",[TestFactory enterCount]);
-    [TestFactory enterFactory];
-    NSLog(@"enterCount:%d",[TestFactory enterCount]);
-    [TestFactory enterFactory];
-    NSLog(@"enterCount:%d",[TestFactory enterCount]);
-    [TestFactory exitFactory];
-    NSLog(@"enterCount:%d",[TestFactory enterCount]);
-    [TestFactory exitFactory];
-    NSLog(@"enterCount:%d",[TestFactory enterCount]);
-    [TestFactory exitFactory];
-    NSLog(@"enterCount:%d",[TestFactory enterCount]);
-    
+    NSLog(@"%ld",(long)[[MDLIOCRegister allRegistedBeans] count]);
     return YES;
-}
-
-- (void)function1 {
-
-
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {

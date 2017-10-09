@@ -11,6 +11,7 @@
 
 #import <objc/runtime.h>
 #import "MDLIOCInjector.h"
+#import "MDLProtocolProxy.h"
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunused-function"

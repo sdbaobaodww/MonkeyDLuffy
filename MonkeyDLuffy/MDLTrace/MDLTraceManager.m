@@ -15,10 +15,15 @@
 
 @interface MDLTraceConfig : JSONModel
 
-@property (nonatomic, copy) NSString *deviceName;
-@property (nonatomic, copy) NSString *os;
-@property (nonatomic, copy) NSString *osVersion;
-@property (nonatomic, copy) NSString *network;
+@property (nonatomic, copy) NSString *deviceName;//设备名称，如：iPhone 7，iPhone Simulator
+@property (nonatomic, copy) NSString *os;//设备的系统类型，如：ios
+@property (nonatomic, copy) NSString *osVersion;//系统的版本号，如：10.3.1
+@property (nonatomic, copy) NSString *network;//网络状态，如：WIFI，4G
+
+/**
+ 设置一些动态信息，如网络状态随时会变更
+ */
+- (void)setupDynamicInfo;
 
 @end
 
@@ -33,6 +38,10 @@
         _osVersion = [divice systemVersion];
     }
     return self;
+}
+
+- (void)setupDynamicInfo {
+    self.network = [MDLTools networkTypeFromStatusBar];
 }
 
 @end
@@ -117,7 +126,7 @@
 
 - (void)saveTrace:(MDLTrace *)trace {
     NSMutableDictionary *dict = [[NSMutableDictionary alloc] initWithDictionary:[trace toDictionary]];
-    _config.network = [MDLTools networkTypeFromStatusBar];
+    [_config setupDynamicInfo];
     [dict addEntriesFromDictionary:[_config toDictionary]];
     
     NSMutableData *wrapData = [NSMutableData dataWithData:[NSJSONSerialization dataWithJSONObject:dict options:kNilOptions error:NULL]];
