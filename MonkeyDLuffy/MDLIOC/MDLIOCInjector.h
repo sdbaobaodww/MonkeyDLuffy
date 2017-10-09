@@ -9,6 +9,8 @@
 #import <Foundation/Foundation.h>
 #import "MDLIOCBean.h"
 
+#pragma mark - IOC注册
+
 /**
  IOC注册类，调用此类方法进行注册和解除注册
  Bean工厂的概念，工厂会在进入时注册相关的Bean，并在退出时清理该工厂已注册的Bean
@@ -86,6 +88,8 @@
 
 @end
 
+#pragma mark - IOC获取
+
 /**
  IOC依赖对象获取类
  */
@@ -106,15 +110,7 @@
 
 @end
 
-/**
- 依赖注入快分类
- */
-@interface NSObject (MDLIOCInjector)
-
-//调用此方法进行依赖对象注入，需实现MDLInjectable协议
-- (void)mdlioc_injector;
-
-@end
+#pragma mark - IOC注入
 
 /**
  IOC依赖注入类，实现依赖对象的注入
@@ -128,3 +124,14 @@
 + (void)injector:(NSObject<MDLInjectable> * __nonnull)obj;
 
 @end
+
+/**
+ 依赖注入快分类
+ */
+@interface NSObject (MDLIOCInjector)
+
+//调用此方法进行依赖对象注入，需实现MDLInjectable协议
+- (void)mdlioc_injector;
+
+@end
+

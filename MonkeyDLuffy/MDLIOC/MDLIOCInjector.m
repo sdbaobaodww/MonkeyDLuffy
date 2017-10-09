@@ -185,21 +185,9 @@ static inline NSString * factoryNameWithFactory(Class<MDLIOCBeanFactory> factory
 
 @end
 
-@implementation NSObject (MDLIOCInjector)
-
-- (void)mdlioc_injector {
-    if (![self respondsToSelector:@selector(mdlioc_injectableProperties)]) {
-        @throw [NSException exceptionWithName:@"MDLIOCInjectorException" reason:@"object must conforms protocol MDLInjectable!" userInfo:nil];
-    }
-    [MDLIOCInjector injector:(NSObject<MDLInjectable> *)self];
-}
-
-@end
-
 @implementation MDLIOCInjector
 
 + (void)injector:(NSObject<MDLInjectable> * __nonnull)obj {
-    
     Class clazz = [obj class];
     if ([clazz respondsToSelector:@selector(mdlioc_injectableProperties)]) {
         mdl_performLocked(^{
@@ -241,6 +229,17 @@ static inline NSString * factoryNameWithFactory(Class<MDLIOCBeanFactory> factory
         }
     }
     return nil;
+}
+
+@end
+
+@implementation NSObject (MDLIOCInjector)
+
+- (void)mdlioc_injector {
+    if (![self respondsToSelector:@selector(mdlioc_injectableProperties)]) {
+        @throw [NSException exceptionWithName:@"MDLIOCInjectorException" reason:@"object must conforms protocol MDLInjectable!" userInfo:nil];
+    }
+    [MDLIOCInjector injector:(NSObject<MDLInjectable> *)self];
 }
 
 @end
