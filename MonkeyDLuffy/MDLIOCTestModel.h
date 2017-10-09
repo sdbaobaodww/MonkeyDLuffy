@@ -19,6 +19,11 @@
 
 @end
 
+//艾斯
+@interface Ais : NSObject<HaizeiProtocol>
+
+@end
+
 //路飞君
 @interface Lufei : NSObject<HaizeiProtocol>
 

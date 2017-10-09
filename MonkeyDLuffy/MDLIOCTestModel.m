@@ -8,6 +8,18 @@
 
 #import "MDLIOCTestModel.h"
 
+@implementation Ais
+
+- (void)fight {
+    NSLog(@"我是艾斯，看我的大炎帝");
+}
+
+- (NSString *)description {
+    return [NSString stringWithFormat:@"<%p> 我是炎帝艾斯！", self];
+}
+
+@end
+
 @implementation Lufei
 
 - (void)fight {

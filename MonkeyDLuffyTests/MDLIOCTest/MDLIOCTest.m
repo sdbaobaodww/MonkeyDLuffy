@@ -166,6 +166,27 @@
     [devilNut eat];
 }
 
+- (void)testAliasBean {
+    [MDLIOCRegister cleanAllBeans];
+    
+    [MDLIOCRegister registerBean:[MDLIOCBean beanWithProtocol:@protocol(HaizeiProtocol) bindClass:[Ais class] cachePolicy:MDLIOCCachePolicyNone alias:@"ais"]];
+    [MDLIOCRegister registerBean:[MDLIOCBean beanWithProtocol:@protocol(HaizeiProtocol) bindClass:[Lufei class] cachePolicy:MDLIOCCachePolicyNone alias:@"lufei"]];
+    [MDLIOCRegister registerBean:[MDLIOCBean beanWithProtocol:@protocol(HaizeiProtocol) bindClass:[Suolong class] cachePolicy:MDLIOCCachePolicyNone alias:@"suolong"]];
+    
+    NSAssert([[MDLIOCRegister allRegistedBeans] count] == 3, @"当前依赖的Bean个数为3");
+    id haizei = [MDLIOCGetter instanceForProtocol:@protocol(DevilNut)];
+    NSAssert(haizei == nil, @"需要使用别名才能获取到对象");
+    
+    haizei = [MDLIOCGetter instanceForProtocol:@protocol(HaizeiProtocol) alias:@"ais"];
+    NSAssert([haizei class] == [Ais class], @"别名ais对应Ais");
+    
+    haizei = [MDLIOCGetter instanceForProtocol:@protocol(HaizeiProtocol) alias:@"lufei"];
+    NSAssert([haizei class] == [Lufei class], @"别名lufei对应Lufei");
+    
+    haizei = [MDLIOCGetter instanceForProtocol:@protocol(HaizeiProtocol) alias:@"suolong"];
+    NSAssert([haizei class] == [Suolong class], @"别名suolong对应Suolong");
+}
+
 - (void)testPerformanceExample {
     [self measureBlock:^{
         for (int i = 0; i < 100; i ++) {
