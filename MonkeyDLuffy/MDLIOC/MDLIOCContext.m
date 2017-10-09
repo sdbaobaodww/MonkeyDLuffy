@@ -8,6 +8,7 @@
 
 #import "MDLIOCContext.h"
 #import "MDLProtocolProxy.h"
+#import "MDLIOCBean.h"
 
 @implementation MDLIOCContext
 {

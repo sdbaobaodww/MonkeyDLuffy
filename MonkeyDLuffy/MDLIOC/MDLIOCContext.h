@@ -7,7 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "MDLIOCBean.h"
+
+@class MDLIOCBean;
 
 /**
  IOC上下文，上下文的作用：1，缓存所有的注入Bean；2，缓存使用缓存策略Bean生成的对象；3，提供工厂使用的批量注册、解除注册方法

@@ -8,6 +8,9 @@
 
 #import <Foundation/Foundation.h>
 
+/**
+ 协议代理类，为一个协议绑定多个实现对象，对该协议代理对象的调用，视为对所有绑定实现对象的调用。
+ */
 @interface MDLProtocolProxy : NSProxy
 
 @property (nonatomic, strong, readonly) Protocol *protocol;//被代理的协议

@@ -11,15 +11,18 @@
 #import <libkern/OSAtomic.h>
 #import <objc/runtime.h>
 
-static MDLIOCContext *iocContext = nil;
+static MDLIOCContext *iocContext = nil;//ioc容器上下文
 static NSMutableDictionary<NSString *, NSMutableArray<MDLIOCBean *> *> *factoryBeans;//工厂下面所有的bean，{工厂名称:[bean]}
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 static void mdl_performLocked(dispatch_block_t block) {
     static OSSpinLock mdl_lock = OS_SPINLOCK_INIT;
     OSSpinLockLock(&mdl_lock);
     block();
     OSSpinLockUnlock(&mdl_lock);
 }
+#pragma clang diagnostic pop
 
 static inline NSString * factoryNameWithFactory(Class<MDLIOCBeanFactory> factory) {
     return factory ? NSStringFromClass(factory) : nil;
@@ -37,7 +40,7 @@ static inline NSString * factoryNameWithFactory(Class<MDLIOCBeanFactory> factory
  @param bean IOC注入描述对象
  @param factoryName 所属工厂名称
  */
-+ (void)addBean:(MDLIOCBean *)bean forFactoryName:(NSString *)factoryName {
++ (void)_addBean:(MDLIOCBean *)bean forFactoryName:(NSString *)factoryName {
     NSMutableArray *beansOfFactory = [factoryBeans objectForKey:factoryName];//工厂下面的Bean
     if (!beansOfFactory) {
         beansOfFactory = [NSMutableArray array];
@@ -51,7 +54,7 @@ static inline NSString * factoryNameWithFactory(Class<MDLIOCBeanFactory> factory
  @param beans IOC注入描述对象数组
  @param factoryName 所属工厂名称
  */
-+ (void)addBeans:(NSArray *)beans forFactoryName:(NSString *)factoryName {
++ (void)_addBeans:(NSArray *)beans forFactoryName:(NSString *)factoryName {
     NSMutableArray *beansOfFactory = [factoryBeans objectForKey:factoryName];//工厂下面的Bean
     if (!beansOfFactory) {
         beansOfFactory = [NSMutableArray array];
@@ -67,7 +70,7 @@ static inline NSString * factoryNameWithFactory(Class<MDLIOCBeanFactory> factory
         [iocContext registerBean:bean forKey:[bean beanKey]];
         
         if (factory) {
-            [self addBean:bean forFactoryName:factoryNameWithFactory(factory)];
+            [self _addBean:bean forFactoryName:factoryNameWithFactory(factory)];
         }
     });
 }
@@ -84,7 +87,7 @@ static inline NSString * factoryNameWithFactory(Class<MDLIOCBeanFactory> factory
             [iocContext registerBean:bean forKey:[bean beanKey]];
         }
         if (factory) {
-            [self addBeans:beans forFactoryName:factoryNameWithFactory(factory)];
+            [self _addBeans:beans forFactoryName:factoryNameWithFactory(factory)];
         }
     });
 }
@@ -99,7 +102,7 @@ static inline NSString * factoryNameWithFactory(Class<MDLIOCBeanFactory> factory
         MDLIOCBean *bean = [MDLIOCBean beanWithProtocol:protocol bindClass:clazz cachePolicy:cachePolicy alias:alias];
         [iocContext registerBean:bean forKey:[bean beanKey]];
         if (factory) {
-            [self addBean:bean forFactoryName:factoryNameWithFactory(factory)];
+            [self _addBean:bean forFactoryName:factoryNameWithFactory(factory)];
         }
     });
 }
@@ -122,7 +125,7 @@ static inline NSString * factoryNameWithFactory(Class<MDLIOCBeanFactory> factory
     [self registerProtocol:protocol clazz:clazz cachePolicy:MDLIOCCachePolicyNone alias:nil fromFactory:Nil];
 }
 
-+ (void)unRegisterAllFromFactory:(Class<MDLIOCBeanFactory> __nonnull)factory {
++ (void)unRegisterAllBeansFromFactory:(Class<MDLIOCBeanFactory> __nonnull)factory {
     NSParameterAssert(factory);
     
     mdl_performLocked(^{
@@ -133,6 +136,14 @@ static inline NSString * factoryNameWithFactory(Class<MDLIOCBeanFactory> factory
             [factoryBeans removeObjectForKey:factoryName];
         }
     });
+}
+
++ (BOOL)isFactoryEntered:(Class<MDLIOCBeanFactory> __nonnull)factory {
+    __block BOOL isEntered = NO;
+    mdl_performLocked(^{
+        isEntered = [factoryBeans objectForKey:factoryNameWithFactory(factory)] != nil;
+    });
+    return isEntered;
 }
 
 @end
@@ -169,7 +180,7 @@ static inline NSString * factoryNameWithFactory(Class<MDLIOCBeanFactory> factory
 }
 
 - (void)setIsInjected:(BOOL)isInjected {
-    objc_setAssociatedObject(self, @selector(isInjected), @(isInjected), OBJC_ASSOCIATION_RETAIN);
+    objc_setAssociatedObject(self, @selector(isInjected), [NSNumber numberWithBool:isInjected], OBJC_ASSOCIATION_RETAIN);
 }
 
 @end

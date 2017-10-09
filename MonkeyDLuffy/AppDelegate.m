@@ -35,6 +35,19 @@
     [(id<Board>)proxy say:@"向前冲"];
     [(id<Board>)proxy victor:@"1111" song:@"222"];
     
+    [TestFactory enterFactory];
+    NSLog(@"enterCount:%d",[TestFactory enterCount]);
+    [TestFactory enterFactory];
+    NSLog(@"enterCount:%d",[TestFactory enterCount]);
+    [TestFactory enterFactory];
+    NSLog(@"enterCount:%d",[TestFactory enterCount]);
+    [TestFactory exitFactory];
+    NSLog(@"enterCount:%d",[TestFactory enterCount]);
+    [TestFactory exitFactory];
+    NSLog(@"enterCount:%d",[TestFactory enterCount]);
+    [TestFactory exitFactory];
+    NSLog(@"enterCount:%d",[TestFactory enterCount]);
+    
     return YES;
 }
 

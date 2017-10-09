@@ -146,3 +146,8 @@
 
 @end
 
+
+@interface TestFactory : MDLIOCBeanFactoryAbstract
+
+@end
+

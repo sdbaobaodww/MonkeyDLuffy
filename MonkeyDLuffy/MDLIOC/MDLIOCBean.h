@@ -8,15 +8,17 @@
 
 #import <Foundation/Foundation.h>
 
+#pragma mark - Bean束协议
+
 /**
- IOC束协议，继承该协议，标识注入bean时使用bean束，实现对bean束的调用，会轮流调用所有已注册的该协议的实现对象
+ IOCBean束协议，继承该协议，标识注入bean时使用bean束，实现对bean束的调用，会轮流调用所有已注册的该协议的实现对象
  */
 @protocol MDLIOCBundle
 
 @end
 
 //判断该协议是否使用bean束
-extern inline BOOL ProtocolIsBundleBean (Protocol *protocol);
+extern BOOL ProtocolIsBundleBean (Protocol *protocol);
 
 //注入对象缓存策略
 typedef NS_ENUM(NSInteger, MDLIOCCachePolicy) {
@@ -37,6 +39,8 @@ typedef NS_ENUM(NSInteger, MDLIOCCachePolicy) {
 + (NSSet *)mdlioc_injectableProperties;
 
 @end
+
+#pragma mark - IOC Bean
 
 /**
  IOC注入描述类，在该类中设置关联协议、实现类、以及缓存策略等信息
@@ -76,30 +80,12 @@ typedef NS_ENUM(NSInteger, MDLIOCCachePolicy) {
 
 @end
 
-@interface MDLIOCBeanKey : NSObject<NSCopying>
-
-@property (nonatomic, strong) Protocol *protocol;
-
-@property (nonatomic, strong) NSString *alias;
-
-@property (nonatomic, strong) NSString *factoryName;
-
-- (instancetype)beanKeyWithProtocol:(Protocol *)aProtocol alias:(NSString *)alias;
-
-@end
-
-#pragma mark - IOC模块协议
+#pragma mark - IOCBean工厂协议
 
 /**
  IOCBean工厂，通常一个业务模块对应一个IOCBean工厂
  */
 @protocol MDLIOCBeanFactory
-
-/**
- 模块名称，默认使用当前对象的类名作为模块名称
- @return 模块名称
- */
-+ (NSString *)factoryName;
 
 /**
  进入工厂，可多次调用，因为每个工厂可能有多个入口，只有第一次进入时会注册该工厂下所有的注入对象
@@ -111,22 +97,10 @@ typedef NS_ENUM(NSInteger, MDLIOCCachePolicy) {
  */
 + (void)exitFactory;
 
-@optional
-
 /**
- 注入依赖对象集合
- @return 注入依赖对象集合
+ @return 需注册的IOC注入描述对象集合
  */
-+ (NSArray<MDLIOCBean *> *)beans;
-
-/**
- 有别名的注入依赖对象集合
- @return 注入依赖对象集合
- */
-+ (NSDictionary<NSString *, MDLIOCBean *> *)aliasBeans;
-
-
-+ (NSArray<MDLIOCBean *> *)bunldeBean;
++ (NSArray<MDLIOCBean *> *)buildBeans;
 
 @end
 
@@ -134,5 +108,9 @@ typedef NS_ENUM(NSInteger, MDLIOCCachePolicy) {
  注册IOC依赖对象模块抽象实现类，buildBeans方法必须重载
  */
 @interface MDLIOCBeanFactoryAbstract : NSObject<MDLIOCBeanFactory>
+
++ (int)enterCount;
+
++ (void)setEnterCount:(int)count;
 
 @end

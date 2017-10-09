@@ -8,7 +8,6 @@
 
 #import "MDLProtocolProxy.h"
 #import <objc/runtime.h>
-#import <libkern/OSAtomic.h>
 
 @implementation MDLProtocolProxy {
     NSMutableDictionary *_impls;//所有的转发对象

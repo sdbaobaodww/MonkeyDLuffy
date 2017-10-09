@@ -10,7 +10,7 @@
 #import "MDLIOCInjector.h"
 #import <objc/runtime.h>
 
-inline BOOL ProtocolIsBundleBean (Protocol *protocol) {
+BOOL ProtocolIsBundleBean (Protocol *protocol) {
     return protocol_conformsToProtocol(protocol, @protocol(MDLIOCBundle));
 }
 
@@ -72,58 +72,32 @@ inline BOOL ProtocolIsBundleBean (Protocol *protocol) {
 
 @end
 
-@implementation MDLIOCBeanKey
-
-- (id)copyWithZone:(nullable NSZone *)zone {
-    MDLIOCBeanKey *key = [self copyWithZone:zone];
-    key.protocol = self.protocol;
-    key.alias = self.alias;
-    key.factoryName = self.factoryName;
-    return key;
-}
-
-- (NSString *)description {
-    return [NSString stringWithFormat:@"%@:%@:%@",self.protocol,self.alias ?: @"" ,self.factoryName ?: @""];
-}
-
-- (NSUInteger)hash {
-    return [[self description] hash];
-}
-
-- (BOOL)isEqual:(id)object {
-    if (object == self) {
-        return YES;
-    }
-    
-    if (![object isKindOfClass:[MDLIOCBeanKey class]]) {
-        return NO;
-    }
-    
-    if ([[self description] isEqual:[object description]]) {
-        return YES;
-    }
-    
-    return NO;
-}
-
-@end
-
 @implementation MDLIOCBeanFactoryAbstract
+
++ (int)enterCount {
+    return [objc_getAssociatedObject(self, _cmd) intValue];
+}
+
++ (void)setEnterCount:(int)count {
+    objc_setAssociatedObject(self, @selector(enterCount), @(count), OBJC_ASSOCIATION_RETAIN);
+}
 
 + (NSArray<MDLIOCBean *> *)buildBeans {
     @throw [NSException exceptionWithName:@"MDLIOCInjectorException" reason:@"method buildBeans must be override" userInfo:nil];
 }
 
-+ (NSString *)factoryName {
-    return NSStringFromClass(self);
-}
-
 + (void)enterFactory {
-    
+    [self setEnterCount:([self enterCount] + 1)];
+    if (![MDLIOCRegister isFactoryEntered:self]) {
+        [MDLIOCRegister registerBeans:[self buildBeans] fromFactory:self];
+    }
 }
 
 + (void)exitFactory {
-    
+    [self setEnterCount:([self enterCount] - 1)];
+    if ([self enterCount] == 0) {
+        [MDLIOCRegister unRegisterAllBeansFromFactory:self];
+    }
 }
 
 @end

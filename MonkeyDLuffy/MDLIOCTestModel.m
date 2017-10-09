@@ -259,3 +259,13 @@ mdlioc_annotation_register(@protocol(Board), MDLIOCCachePolicyCache, nil)
 }
 
 @end
+
+@implementation TestFactory
+
++ (NSArray<MDLIOCBean *> *)buildBeans {
+    return @[[MDLIOCBean beanWithProtocol:@protocol(Board) bindClass:[MaliHao class] cachePolicy:0 alias:@"meili"],
+             [MDLIOCBean beanWithProtocol:@protocol(Board) bindClass:[HuangjinMaliHao class] cachePolicy:0 alias:@"huangjinmeili"]
+             ];
+}
+
+@end

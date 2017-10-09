@@ -73,10 +73,22 @@
  取消注册工厂下所有已注册的Bean
  @param factory Bean工厂，Bean工厂会影响Bean的生命周期，工厂被销毁时，工厂下的Bean也会被销毁
  */
-+ (void)unRegisterAllFromFactory:(Class<MDLIOCBeanFactory> __nonnull)factory;
++ (void)unRegisterAllBeansFromFactory:(Class<MDLIOCBeanFactory> __nonnull)factory;
+
+
+/**
+ 判断是否已经进入该工厂
+
+ @param factory Bean 工厂
+ @return 已进入工厂返回YES，否则返回NO
+ */
++ (BOOL)isFactoryEntered:(Class<MDLIOCBeanFactory> __nonnull)factory;
 
 @end
 
+/**
+ IOC依赖对象获取类
+ */
 @interface MDLIOCGetter : NSObject
 
 /**
@@ -104,6 +116,9 @@
 
 @end
 
+/**
+ IOC依赖注入类，实现依赖对象的注入
+ */
 @interface MDLIOCInjector : NSObject
 
 /**

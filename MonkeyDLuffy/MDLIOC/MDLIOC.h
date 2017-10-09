@@ -59,5 +59,4 @@ static NSSet * BuildDependenciesForClass(Class clazz, NSSet *requirements) {
     [MDLIOCRegister registerBean:[MDLIOCBean beanWithProtocol:(_protocol) bindClass:self cachePolicy:MDLIOCCachePolicyNone alias:nil]]; \
 }
 
-
 #endif /* MDLIOC_h */
