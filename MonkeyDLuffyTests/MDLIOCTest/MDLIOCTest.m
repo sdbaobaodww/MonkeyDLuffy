@@ -149,7 +149,7 @@
     }
 }
 
-//测试Bean束
+//测试Bean组
 - (void)testBeanBundle {
     [MDLIOCRegister cleanAllBeans];
     
@@ -161,7 +161,7 @@
     
     id devilNut = [MDLIOCGetter instanceForProtocol:@protocol(DevilNut)];
     
-    NSAssert([devilNut class] == [MDLProtocolProxy class], @"Bean束返回的对象为协议代理类型");
+    NSAssert([devilNut class] == [MDLProtocolProxy class], @"Bean组返回的对象为协议代理类型");
     
     [devilNut eat];
 }

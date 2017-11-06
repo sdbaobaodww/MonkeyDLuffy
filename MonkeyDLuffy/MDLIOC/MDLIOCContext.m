@@ -13,7 +13,7 @@
 @implementation MDLIOCContext
 {
     NSMutableDictionary *_instanceCache;//对象缓存
-    NSMutableDictionary<id<NSCopying>, NSMutableArray<MDLIOCBean *> *> *_bundleBeans;//bean束，协议与实现一对多，{beanKey:[bean]}
+    NSMutableDictionary<id<NSCopying>, NSMutableArray<MDLIOCBean *> *> *_bundleBeans;//Bean组，协议与实现一对多，{beanKey:[bean]}
     NSMutableDictionary<id<NSCopying>, MDLIOCBean *> *_normalBeans;//通用的bean集合，无别名时协议与实现一对一，有别名时协议与实现一对多。{beanKey:bean}
 }
 
@@ -35,11 +35,11 @@
 }
 
 - (void)registerBean:(MDLIOCBean * __nonnull)bean forKey:(NSString * __nonnull)beanKey {
-    if ([bean isBundleBean]) {
-        NSMutableArray *bunleBeans = _bundleBeans[beanKey];//该协议对应的bean束是否存在
-        MDLProtocolProxy *proxy = _instanceCache[beanKey];//每个bean束会创建一个MDLProtocolProxy并在_instanceCache进行缓存
-        if (!bunleBeans) {//bean束不存在
-            //创建并绑定bean束
+    if ([bean isGroupBean]) {
+        NSMutableArray *bunleBeans = _bundleBeans[beanKey];//该协议对应的Bean组是否存在
+        MDLProtocolProxy *proxy = _instanceCache[beanKey];//每个Bean组会创建一个MDLProtocolProxy并在_instanceCache进行缓存
+        if (!bunleBeans) {//Bean组不存在
+            //创建并绑定Bean组
             bunleBeans = [NSMutableArray array];
             _bundleBeans[beanKey] = bunleBeans;
             
@@ -64,7 +64,7 @@
 }
 
 - (void)unRegisterBeanBundleForKey:(NSString * __nonnull)beanKey clazz:(Class __nullable)clazz {
-    if (clazz) {//解除注册bean束内指定class
+    if (clazz) {//解除注册Bean组内指定class
         //获取代理对象，移除该bean在代理对象中的实现
         MDLProtocolProxy *proxy = _instanceCache[beanKey];
         [proxy removeImplWithClass:clazz];
@@ -82,15 +82,15 @@
         }
         
         if (findBean) {
-            [bundleBean removeObjectAtIndex:idx];//从bean束中移除bean
-            //当bean束不存在任何bean时，移除bean束，移除缓存的MDLProtocolProxy代理对象
+            [bundleBean removeObjectAtIndex:idx];//从Bean组中移除bean
+            //当Bean组不存在任何bean时，移除Bean组，移除缓存的MDLProtocolProxy代理对象
             if ([bundleBean count] == 0) {
-                [_bundleBeans removeObjectForKey:beanKey];//移除bean束
+                [_bundleBeans removeObjectForKey:beanKey];//移除Bean组
                 [_instanceCache removeObjectForKey:beanKey];//移除缓存的代理对象
             }
         }
-    }else{//解除注册bean束
-        [_bundleBeans removeObjectForKey:beanKey];//移除bean束
+    }else{//解除注册Bean组
+        [_bundleBeans removeObjectForKey:beanKey];//移除Bean组
         [_instanceCache removeObjectForKey:beanKey];//移除缓存的代理对象
     }
 }
@@ -99,18 +99,18 @@
     for (MDLIOCBean *bean in beans) {
         id<NSCopying> beanKey = [bean beanKey];
         
-        if ([bean isBundleBean]) {
+        if ([bean isGroupBean]) {
             //获取代理对象，移除该bean在代理对象中的实现
             MDLProtocolProxy *proxy = _instanceCache[beanKey];
             [proxy removeImplWithClass:bean.bindClass];
             
-            //从bean束中移除bean
+            //从Bean组中移除bean
             NSMutableArray *bundleBean = _bundleBeans[beanKey];
             [bundleBean removeObject:bean];
             
-            //当bean束不存在任何bean时，移除bean束，移除缓存的MDLProtocolProxy代理对象
+            //当Bean组不存在任何bean时，移除Bean组，移除缓存的MDLProtocolProxy代理对象
             if ([bundleBean count] == 0) {
-                [_bundleBeans removeObjectForKey:beanKey];//移除bean束
+                [_bundleBeans removeObjectForKey:beanKey];//移除Bean组
                 [_instanceCache removeObjectForKey:beanKey];//移除缓存的代理对象
             }
         }else{
@@ -123,7 +123,7 @@
 }
 
 - (id __nullable)instanceForKey:(NSString * __nonnull)beanKey beanBunlde:(BOOL)beanBundle {
-    if (beanBundle) {//bean束
+    if (beanBundle) {//Bean组
         return _instanceCache[beanKey];
     }
     

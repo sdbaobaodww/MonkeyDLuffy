@@ -179,7 +179,7 @@ static inline NSString * factoryNameWithFactory(Class<MDLIOCBeanFactory> factory
     
     __block id obj = nil;
     mdl_performLocked(^{
-        obj = [iocContext instanceForKey:[MDLIOCBean beanKeyForProtocol:protocol alias:alias] beanBunlde:ProtocolIsBundleBean(protocol)];
+        obj = [iocContext instanceForKey:[MDLIOCBean beanKeyForProtocol:protocol alias:alias] beanBunlde:ProtocolisGroupBean(protocol)];
     });
     return obj;
 }
@@ -224,7 +224,7 @@ static inline NSString * factoryNameWithFactory(Class<MDLIOCBeanFactory> factory
                 //获取属性对应的协议
                 Protocol *protocol = NSProtocolFromString([self _getClassOrProtocolForProperty:class_getProperty(clazz, (const char *)[propertyName UTF8String])]);
                 //根据协议Key获取对应的实例
-                propertiesDictionary[propertyName] = [iocContext instanceForKey:[MDLIOCBean beanKeyForProtocol:protocol alias:nil] beanBunlde:ProtocolIsBundleBean(protocol)];
+                propertiesDictionary[propertyName] = [iocContext instanceForKey:[MDLIOCBean beanKeyForProtocol:protocol alias:nil] beanBunlde:ProtocolisGroupBean(protocol)];
             }
             [obj setValuesForKeysWithDictionary:propertiesDictionary];//KVC设置属性值
             
