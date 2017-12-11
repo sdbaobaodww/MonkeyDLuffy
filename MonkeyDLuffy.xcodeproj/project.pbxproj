@@ -19,6 +19,7 @@
 		4A483F2C1F5D2CFB00B3CC4E /* MDLTraceTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A483F2B1F5D2CFB00B3CC4E /* MDLTraceTest.m */; };
 		4A483F2D1F5D2D6E00B3CC4E /* MDLTrace.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A41EDEF1F580E790090E20F /* MDLTrace.m */; };
 		4A483F2E1F5D2D7300B3CC4E /* MDLTraceManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A41EE271F5949A40090E20F /* MDLTraceManager.m */; };
+		4A6B61CB1FB94FE100D7B0E9 /* MDLInfinityRingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A6B61CA1FB94FE100D7B0E9 /* MDLInfinityRingView.m */; };
 		4A75D3FE1F442E320063C74D /* MDLRuntimeUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A75D3FD1F442E320063C74D /* MDLRuntimeUtil.m */; };
 		4A75D3FF1F442E320063C74D /* MDLRuntimeUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A75D3FD1F442E320063C74D /* MDLRuntimeUtil.m */; };
 		4A75D40A1F443C050063C74D /* MDLIOCContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A75D4091F443C050063C74D /* MDLIOCContext.m */; };
@@ -86,6 +87,8 @@
 		4A41EE2D1F5955AF0090E20F /* MDLTools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MDLTools.h; sourceTree = "<group>"; };
 		4A41EE2E1F5955AF0090E20F /* MDLTools.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MDLTools.m; sourceTree = "<group>"; };
 		4A483F2B1F5D2CFB00B3CC4E /* MDLTraceTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MDLTraceTest.m; sourceTree = "<group>"; };
+		4A6B61C91FB94FE100D7B0E9 /* MDLInfinityRingView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MDLInfinityRingView.h; sourceTree = "<group>"; };
+		4A6B61CA1FB94FE100D7B0E9 /* MDLInfinityRingView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MDLInfinityRingView.m; sourceTree = "<group>"; };
 		4A75D3FC1F442E320063C74D /* MDLRuntimeUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MDLRuntimeUtil.h; sourceTree = "<group>"; };
 		4A75D3FD1F442E320063C74D /* MDLRuntimeUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MDLRuntimeUtil.m; sourceTree = "<group>"; };
 		4A75D4081F443C050063C74D /* MDLIOCContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MDLIOCContext.h; sourceTree = "<group>"; };
@@ -189,6 +192,15 @@
 			path = MDLTraceTest;
 			sourceTree = "<group>";
 		};
+		4A6B61C81FB94FA500D7B0E9 /* MDLGoldRing */ = {
+			isa = PBXGroup;
+			children = (
+				4A6B61C91FB94FE100D7B0E9 /* MDLInfinityRingView.h */,
+				4A6B61CA1FB94FE100D7B0E9 /* MDLInfinityRingView.m */,
+			);
+			path = MDLGoldRing;
+			sourceTree = "<group>";
+		};
 		4A75D3F91F442D640063C74D /* MDLIOC */ = {
 			isa = PBXGroup;
 			children = (
@@ -230,6 +242,7 @@
 		4A8E8E721F3C084E006E5953 /* MonkeyDLuffy */ = {
 			isa = PBXGroup;
 			children = (
+				4A6B61C81FB94FA500D7B0E9 /* MDLGoldRing */,
 				4A41EE2C1F5955A40090E20F /* MDLCommon */,
 				4A41EDE61F580CA90090E20F /* MDLTrace */,
 				4A75D3F91F442D640063C74D /* MDLIOC */,
@@ -494,6 +507,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4A0A7F091F6A1C5C004228C2 /* MDLProtocolProxy.m in Sources */,
+				4A6B61CB1FB94FE100D7B0E9 /* MDLInfinityRingView.m in Sources */,
 				4A3BB7471F6F74A400DBEB88 /* MDLIOCInjector.m in Sources */,
 				4A41EDF01F580E790090E20F /* MDLTrace.m in Sources */,
 				4A8E8E7B1F3C084E006E5953 /* ViewController.m in Sources */,
@@ -672,7 +686,7 @@
 				DEVELOPMENT_TEAM = 59B8QAXTFE;
 				INFOPLIST_FILE = MonkeyDLuffy/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.duan.MonkeyDLuffy;
+				PRODUCT_BUNDLE_IDENTIFIER = com.gw.MonkeyDLuffy;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -685,7 +699,7 @@
 				DEVELOPMENT_TEAM = 59B8QAXTFE;
 				INFOPLIST_FILE = MonkeyDLuffy/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.duan.MonkeyDLuffy;
+				PRODUCT_BUNDLE_IDENTIFIER = com.gw.MonkeyDLuffy;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
