@@ -24,7 +24,7 @@
 
 @protocol MDLInfinityRingViewDataSource <NSObject>
 
-- (UIView *)infinityRingView:(MDLInfinityRingView *)infinityRingView initSubringAtIndex:(NSInteger)index withFrame:(CGRect)frame;
+- (UIView *)infinityRingView:(MDLInfinityRingView *)infinityRingView buildSubringAtIndex:(NSInteger)index withFrame:(CGRect)frame;
 
 - (void)infinityRingView:(MDLInfinityRingView *)infinityRingView updateSubring:(UIView *)view dataIndex:(NSInteger)dataIndex;
 
@@ -63,5 +63,11 @@
  @return 无限环视图
  */
 - (instancetype)initWithFrame:(CGRect)frame initIndex:(NSInteger)initIndex dataCount:(NSInteger)dataCount;
+
+/**
+ 滑动到指定数据索引处
+ @param dataIndex 数据索引
+ */
+- (void)scrollToDataIndex:(NSInteger)dataIndex;
 
 @end

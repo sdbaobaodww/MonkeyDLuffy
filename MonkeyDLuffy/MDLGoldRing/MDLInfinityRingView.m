@@ -18,25 +18,35 @@ typedef NS_ENUM(NSInteger, InfinityRingEdgeStatus) {
 
 //无限环当前的位置信息
 typedef struct {
-    NSInteger dataIndex;//最左边页面对应的数据索引
-    NSInteger pageIndex;//当前页面的索引
+    NSInteger dataIndex;        //最左边页面对应的数据索引
+    NSInteger pageIndex;        //当前页面的索引
     InfinityRingEdgeStatus edgeStatus;//边界状态
 }InfinityRingLocationInfo;
 
+static inline NSInteger RingLocationGetCurrentDateIndex(InfinityRingLocationInfo location) {
+    return location.dataIndex + location.pageIndex;
+}
+
 //数据源实现方法标记
 typedef struct {
-    BOOL hasWillUpdateImpl;
-    BOOL hasDidUpdateImpl;
-    BOOL hasNumberOfSubringImpl;
+    BOOL hasWillUpdateImpl;     //是否实现infinityRingView:willUpdateSubring:dataIndex:
+    BOOL hasDidUpdateImpl;      //是否实现infinityRingView:didUpdateSubring:dataIndex:
+    BOOL hasNumberOfSubringImpl;//是否实现numberOfSubringInInfinityRingView:
 }InfinityRingDataSourceFlag;
+
+//子环滑动后的位置信息
+typedef struct {
+    NSInteger currentIndex;     //子环当前所处的索引
+    NSInteger movement;         //子环滑动页数，右滑大于0，左滑小于0
+    NSInteger finalPageIndex;   //滑动后最终的索引
+    BOOL isCompensate;          //是否涉及到补偿，向右滑动时页面索引值都减少，左边的子环可能被补偿到右边；向左滑动时页面索引值都增大，右边的子环可能被补偿到左边。
+}InfinitySubringLocation;
 
 #define kRatioLimit .999
 
 @interface UIView (MarkDataIndex)
 
-@property (nonatomic, assign) NSInteger md_dataIndex;
-
-@property (nonatomic, assign) BOOL md_needUpdate;
+@property (nonatomic, assign) NSInteger md_dataIndex;//记录数据索引
 
 @end
 
@@ -50,32 +60,33 @@ typedef struct {
     objc_setAssociatedObject(self, @selector(md_dataIndex), [NSNumber numberWithInteger:md_dataIndex], OBJC_ASSOCIATION_RETAIN);
 }
 
-- (BOOL)md_needUpdate {
-    return [objc_getAssociatedObject(self, _cmd) boolValue];
-}
-
-- (void)setMd_needUpdate:(BOOL)md_needUpdate {
-    objc_setAssociatedObject(self, @selector(md_needUpdate), [NSNumber numberWithBool:md_needUpdate], OBJC_ASSOCIATION_RETAIN);
-}
-
 @end
 
 @interface MDLInfinityRingView (Private)
 
 /**
- 计算最终的子环索引
- @param pageIndex 子环偏移后的页面索引值
+ 计算子环的位置信息，滑动时索引值变动规则：向右滑动时页面索引值都减少，左边的子环可能被补偿到右边；向左滑动时页面索引值都增大，右边的子环可能被补偿到左边。
+ @param currentIndex 子环当前的索引
+ @param pageOffset 子环的页面偏移量
  @param subringCount 子环个数
- @return 最终的子环索引
+ @return 子环的位置信息
  */
-- (NSInteger)_realIndex:(NSInteger)pageIndex subringCount:(NSInteger)subringCount;
+- (InfinitySubringLocation)_subringLocationWithIndex:(NSInteger)currentIndex pageOffset:(NSInteger)pageOffset subringCount:(NSInteger)subringCount;
 
 /**
  移动后重新布局视图
  @param currentPage 当前页面位置
- @param pageOffset 移动的页数
+ @param pageOffset 页面偏移量
  */
 - (void)_layoutViewWithCurrentPage:(NSInteger)currentPage pageOffset:(NSInteger)pageOffset;
+
+/**
+ 更新子环视图
+ @param subringView 子环视图
+ @param dataIndex 数据索引
+ @param flag 数据源实现方法标记
+ */
+- (void)_updateSubringView:(UIView *)subringView withDateIndex:(NSInteger)dataIndex flag:(InfinityRingDataSourceFlag)flag;
 
 /**
  计算视图初始化时的位置信息
@@ -88,7 +99,7 @@ typedef struct {
 
 /**
  计算滑动后视图最终的位置信息
- @param pageOffset 滑动页数
+ @param pageOffset 页面偏移量
  @param lastLocation 上一次的位置信息
  @param subringCount 子环个数
  @param dataCount 数据总个数
@@ -101,6 +112,16 @@ typedef struct {
  */
 - (void)_setupInfinityRingView;
 
+/**
+ 通过最终显示的数据索引计算页面偏移量
+ @param dataIndex 数据索引
+ @param lastLocation 上一次的位置信息
+ @param subringCount 子环个数
+ @param dataCount 数据总个数
+ @return 页面偏移量
+ */
+- (NSInteger)_pageOffsetWithFinalDisplayDataIndex:(NSInteger)dataIndex lastLocation:(InfinityRingLocationInfo)lastLocation subringCount:(NSInteger)subringCount dataCount:(NSInteger)dataCount;
+
 @end
 
 @interface MDLInfinityRingView () <UIScrollViewDelegate>
@@ -112,13 +133,12 @@ typedef struct {
 @end
 
 @implementation MDLInfinityRingView {
-    InfinityRingLocationInfo    _ringLocation;
-    NSInteger                   _subringCount;
-    NSInteger                   _dataCount;
-    NSInteger                   _initDataIndex;
-    NSInteger                   _startIndex;
-    NSMutableArray              *_subrings;
-    InfinityRingDataSourceFlag  _dataSourceFlag;
+    InfinityRingLocationInfo    _ringLocation;//无限环当前的位置信息
+    NSInteger                   _subringCount;//子环个数
+    NSInteger                   _dataCount;//数据个数
+    NSInteger                   _initDataIndex;//初始化时显示的数据索引
+    NSMutableArray              *_subrings;//子环页面数组
+    InfinityRingDataSourceFlag  _dataSourceFlag;//数据源方法实现标记
 }
 
 - (instancetype)initWithFrame:(CGRect)frame initIndex:(NSInteger)initIndex dataCount:(NSInteger)dataCount {
@@ -131,11 +151,8 @@ typedef struct {
         [scrollView setShowsHorizontalScrollIndicator:NO];
         [scrollView setPagingEnabled:YES];
         [scrollView setDelegate:self];
-        
         [self addSubview:scrollView];
         _scrollView = scrollView;
-        
-        [self _setupInfinityRingView];
     }
     return self;
 }
@@ -161,18 +178,39 @@ typedef struct {
     }
 }
 
+- (void)scrollToDataIndex:(NSInteger)dataIndex {
+    if (dataIndex < 0 || dataIndex >= _dataCount) {
+        return;
+    }
+    NSInteger currentDataIndex = RingLocationGetCurrentDateIndex(_ringLocation);
+    if (currentDataIndex == dataIndex) {
+        return;
+    }
+    NSInteger pageOffset = [self _pageOffsetWithFinalDisplayDataIndex:dataIndex lastLocation:_ringLocation subringCount:_subringCount dataCount:_dataCount];
+    if (pageOffset == 0) {
+        return;
+    }
+    self.viewInvalidate = YES;
+    [self _layoutViewWithCurrentPage:_currentOffsetPage pageOffset:pageOffset];
+}
+
 #pragma mark - Private
 
-- (NSInteger)_realIndex:(NSInteger)pageIndex subringCount:(NSInteger)subringCount {
-    if (pageIndex < 0) {
-        pageIndex = pageIndex + subringCount;
-        while (pageIndex < 0) {
-            pageIndex = pageIndex + subringCount;
-        }
-        return pageIndex;
-    } else {
-        return pageIndex % subringCount;
+- (InfinitySubringLocation)_subringLocationWithIndex:(NSInteger)currentIndex pageOffset:(NSInteger)pageOffset subringCount:(NSInteger)subringCount {
+    BOOL isCompensate = NO;
+    NSInteger movedPageIndex = currentIndex - pageOffset;//移动后的索引
+    if (movedPageIndex < 0) {//向右滑动，如果移动后的索引值小于0，则进行补偿，将该子环被补偿到无限环的右边，以便能继续向右滑动
+        do {
+            movedPageIndex = movedPageIndex + subringCount;
+        } while (movedPageIndex < 0);
+        isCompensate = YES;
+    } else if (movedPageIndex >= subringCount) {//向左滑动，如果移动后的索引值大于等于子环个数，则进行补偿，将该子环被补偿到无限环的左边，以便能继续向左滑动
+        movedPageIndex = movedPageIndex % subringCount;
+        isCompensate = YES;
+    } else {//不涉及到补偿
+        movedPageIndex = movedPageIndex % subringCount;
     }
+    return (InfinitySubringLocation) {currentIndex, pageOffset, movedPageIndex, isCompensate};
 }
 
 - (void)_layoutViewWithCurrentPage:(NSInteger)currentPage pageOffset:(NSInteger)pageOffset {
@@ -187,51 +225,70 @@ typedef struct {
     CGRect frame = _scrollView.bounds;
     _currentOffsetPage = finalLocation.pageIndex;
     
+    _scrollView.delegate = nil;
     if (finalLocation.edgeStatus == InfinityRingEdgeNone) {
-        _scrollView.delegate = nil;
         CGFloat compensateOffset = finalLocation.pageIndex == lastLocation.pageIndex ? frame.size.width * _offsetRatio : 0;//视图位置调整时补偿的偏移
         _scrollView.contentOffset = CGPointMake(frame.size.width * finalLocation.pageIndex + compensateOffset, .0);
-        _scrollView.delegate = self;
+    } else {
+        _scrollView.contentOffset = CGPointMake(frame.size.width * finalLocation.pageIndex, .0);
     }
+    _scrollView.delegate = self;
     
     //数据位移
     NSInteger validDataOffset = finalLocation.dataIndex - lastLocation.dataIndex;
     if (validDataOffset == 0) {
         return;
     }
-    NSLog(@"数据位移:%ld", validDataOffset);
     
-    id<MDLInfinityRingViewDataSource> dataSource = self.dataSource;
     NSInteger startDataIndex = finalLocation.dataIndex;
     NSArray *subrings = _subrings;
     NSMutableArray *adjustedSubrings = [NSMutableArray arrayWithArray:subrings];
+    InfinityRingDataSourceFlag flag = _dataSourceFlag;
+    UIView *displaySubring = nil;//当前显示的子环视图
+    NSMutableArray *compensateSubrings = [NSMutableArray array];//需要补偿更新的子环界面
+    
     //调整滑动后各视图的位置
     for (int i = 0; i < subringCount; i ++) {
-        UIView *itemView = [subrings objectAtIndex:i];
-        NSInteger finalIndex = [self _realIndex:i - validDataOffset subringCount:subringCount];//滑动后该视图最终落在的索引
-        itemView.frame = CGRectMake(frame.size.width * finalIndex, .0, frame.size.width, frame.size.height);//调整后的视图位置
-        [adjustedSubrings replaceObjectAtIndex:finalIndex withObject:itemView];
+        UIView *subringView = [subrings objectAtIndex:i];
         
-        //判断页面是否需要重新刷新数据，如往右滑动时，左边的视图项滑出到右边进行补偿；往左滑动时，右边的视图项滑出到左边进行补偿。这两种情况需要对视图项进行更新
-        itemView.md_needUpdate = (pageOffset > 0 && i - validDataOffset < 0) || (pageOffset < 0 && i - validDataOffset >= subringCount);
+        InfinitySubringLocation subringLocation = [self _subringLocationWithIndex:i pageOffset:validDataOffset subringCount:subringCount];//移动后子环的位置
+        subringView.frame = CGRectMake(frame.size.width * subringLocation.finalPageIndex, .0, frame.size.width, frame.size.height);
+        [adjustedSubrings replaceObjectAtIndex:subringLocation.finalPageIndex withObject:subringView];
+        
+        if (subringLocation.isCompensate) {//补偿后需要更新子环界面
+            subringView.md_dataIndex = startDataIndex + subringLocation.finalPageIndex;//数据索引
+            [compensateSubrings addObject:subringView];
+            if (subringLocation.finalPageIndex == finalLocation.pageIndex) {
+                displaySubring = subringView;
+            }
+        }
     }
     _subrings = adjustedSubrings;
     
-    InfinityRingDataSourceFlag flag = _dataSourceFlag;
-    //对需要变更的子环调用数据源进行更新
-    [adjustedSubrings enumerateObjectsUsingBlock:^(UIView *itemView, NSUInteger idx, BOOL * _Nonnull stop) {
-        if (itemView.md_needUpdate) {
-            NSInteger dataIndex = startDataIndex + idx;
-            
-            if (flag.hasWillUpdateImpl) {
-                [dataSource infinityRingView:self willUpdateSubring:itemView dataIndex:dataIndex];
-            }
-            [dataSource infinityRingView:self updateSubring:itemView dataIndex:dataIndex];
-            if (flag.hasDidUpdateImpl) {
-                [dataSource infinityRingView:self didUpdateSubring:itemView dataIndex:dataIndex];
-            }
+    if ([compensateSubrings count] <= 0) {
+        return;
+    }
+    printf("---------------------------------\n");
+    //优先更新正在显示的子环
+    if (displaySubring) {
+        [self _updateSubringView:displaySubring withDateIndex:displaySubring.md_dataIndex flag:flag];
+    }
+    for (UIView *subringView in compensateSubrings) {//需要更新的子环界面
+        if (subringView != displaySubring) {
+            [self _updateSubringView:subringView withDateIndex:subringView.md_dataIndex flag:flag];
         }
-    }];
+    }
+}
+
+- (void)_updateSubringView:(UIView *)subringView withDateIndex:(NSInteger)dataIndex flag:(InfinityRingDataSourceFlag)flag {
+    if (flag.hasWillUpdateImpl) {
+        [self.dataSource infinityRingView:self willUpdateSubring:subringView dataIndex:dataIndex];
+    }
+    [self.dataSource infinityRingView:self updateSubring:subringView dataIndex:dataIndex];
+    if (flag.hasDidUpdateImpl) {
+        [self.dataSource infinityRingView:self didUpdateSubring:subringView dataIndex:dataIndex];
+    }
+    printf("更新子环数据:%ld \n", dataIndex);
 }
 
 - (InfinityRingLocationInfo)_initLocationWithSubringCount:(NSInteger)subringCount initIndex:(NSInteger)initIndex dataCount:(NSInteger)dataCount {
@@ -240,11 +297,11 @@ typedef struct {
     InfinityRingEdgeStatus edgeStatus = InfinityRingEdgeNone;
     if (initIndex == 0) { //第一个元素
         edgeStatus = InfinityRingEdgeStart;
-        dataStartIndex = initIndex;
+        dataStartIndex = 0;
         pageIndex = 0;
     } else if (initIndex == dataCount - 1) { //最后一个元素
         edgeStatus = InfinityRingEdgeEnd;
-        dataStartIndex = initIndex + 1 - subringCount;
+        dataStartIndex = dataCount - subringCount;
         pageIndex = subringCount - 1;
     } else { //中间的元素，区分3种情况：1，视图右边界显示最后一个数据，2，视图左边界显示第一个数据，3，在中间页面显示，左右没有触碰到数据边界
         NSInteger halfCount = subringCount / 2;
@@ -269,9 +326,10 @@ typedef struct {
     NSInteger pageIndex = lastLocation.pageIndex;
     NSInteger dataIndex = lastLocation.dataIndex;
     InfinityRingEdgeStatus edgeStatus = InfinityRingEdgeNone;
+    
     if (pageOffset > 0) { //往右滑动
         for (NSInteger i = 1; i <= pageOffset; i ++) {
-            if (lastLocation.dataIndex + i + subringCount > dataCount) { //右边已到边界，此时相当于简单的scroll滑动，直接增加页数，不涉及数据更新
+            if (dataIndex + subringCount >= dataCount) { //右边已到边界，此时相当于简单的scroll滑动，直接增加页数，不涉及数据更新
                 edgeStatus = InfinityRingEdgeEnd;
                 if (pageIndex + 1 > subringCount) {//已经滑动到最右边
                     break;
@@ -281,13 +339,14 @@ typedef struct {
                 edgeStatus = InfinityRingEdgeStart;
                 pageIndex ++;
             } else { //一直显示中间视图，需要更新数据
+                edgeStatus = InfinityRingEdgeNone;
                 dataIndex ++;
             }
         }
     } else if (pageOffset < 0) { //往左滑动
         pageOffset = -pageOffset;
         for (NSInteger i = 1; i <= pageOffset; i ++) {
-            if (lastLocation.dataIndex - i < 0) { //左边已到边界，此时相当于简单的scroll滑动，直接减少页数
+            if (dataIndex <= 0) { //左边已到边界，此时相当于简单的scroll滑动，直接减少页数
                 edgeStatus = InfinityRingEdgeStart;
                 if (pageIndex - 1 < 0) {//已经滑动到最左边
                     break;
@@ -297,6 +356,7 @@ typedef struct {
                 edgeStatus = InfinityRingEdgeEnd;
                 pageIndex --;
             } else { //一直显示中间视图，需要更新数据
+                edgeStatus = InfinityRingEdgeNone;
                 dataIndex --;
             }
         }
@@ -306,7 +366,7 @@ typedef struct {
 
 - (void)_setupInfinityRingView {
     id<MDLInfinityRingViewDataSource> dataSource = self.dataSource;
-    if (![dataSource respondsToSelector:@selector(infinityRingView:initSubringAtIndex:withFrame:)]) {
+    if (![dataSource respondsToSelector:@selector(infinityRingView:buildSubringAtIndex:withFrame:)]) {
         return;
     }
     InfinityRingDataSourceFlag flag = _dataSourceFlag;
@@ -332,23 +392,45 @@ typedef struct {
     
     NSInteger dataIndex = 0;
     for (int i = 0; i < subringCount; i ++) {
-        UIView *itemView = [dataSource infinityRingView:self initSubringAtIndex:i withFrame:CGRectMake(frame.size.width * i, .0, frame.size.width, frame.size.height)];
-        itemView.tag = i;
+        UIView *subringView = [dataSource infinityRingView:self buildSubringAtIndex:i withFrame:CGRectMake(frame.size.width * i, .0, frame.size.width, frame.size.height)];
+        subringView.tag = i;
         dataIndex = startLocation.dataIndex + i;
-        itemView.md_dataIndex = dataIndex;
         
-        if (flag.hasWillUpdateImpl) {
-            [dataSource infinityRingView:self willUpdateSubring:itemView dataIndex:dataIndex];
-        }
-        [dataSource infinityRingView:self updateSubring:itemView dataIndex:dataIndex];
-        if (flag.hasDidUpdateImpl) {
-            [dataSource infinityRingView:self didUpdateSubring:itemView dataIndex:dataIndex];
-        }
+        [self _updateSubringView:subringView withDateIndex:dataIndex flag:flag];
         
-        [scrollView addSubview:itemView];
-        [subrings addObject:itemView];
+        [scrollView addSubview:subringView];
+        [subrings addObject:subringView];
     }
     _subrings = subrings;
+}
+
+- (NSInteger)_pageOffsetWithFinalDisplayDataIndex:(NSInteger)dataIndex lastLocation:(InfinityRingLocationInfo)lastLocation subringCount:(NSInteger)subringCount dataCount:(NSInteger)dataCount{
+    if (dataIndex < 0 || dataIndex >= dataCount) {
+        return 0;
+    }
+    
+    NSInteger half = subringCount / 2;
+    
+    //需要刷新数据时的页面偏移量计算方法，为数据移动位移 + 界面滚动位移
+    NSInteger(^calculator)(NSInteger, NSInteger, InfinityRingLocationInfo) = ^(NSInteger _dataIndex, NSInteger _half, InfinityRingLocationInfo _location) {
+        return (_dataIndex - _half - _location.dataIndex) + (_half - _location.pageIndex);
+    };
+    
+    if (lastLocation.edgeStatus == InfinityRingEdgeStart) {//处于左边界
+        if (dataIndex <= half) {//不需要刷新数据，，仅进行滚动
+            return dataIndex - lastLocation.pageIndex;
+        } else {//需要刷新数据的情况
+            return calculator(dataIndex, half, lastLocation);
+        }
+    } else if (lastLocation.edgeStatus == InfinityRingEdgeEnd) {//处于右边界
+        if (dataIndex >= lastLocation.dataIndex) {//不需要刷新数据，仅进行滚动
+            return dataIndex - lastLocation.dataIndex - lastLocation.pageIndex;
+        } else {//需要刷新数据的情况
+            return calculator(dataIndex, half, lastLocation);
+        }
+    } else {//需要刷新数据的情况
+        return calculator(dataIndex, half, lastLocation);
+    }
 }
 
 #pragma mark - UIScrollViewDelegate
@@ -375,7 +457,7 @@ typedef struct {
             movedPage ++;
             temp                    = offsetRatio - 1;;
         }
-        if (movedPage > 0) {
+        if (movedPage > 0) {//判断是否有移动页面
             _offsetRatio            = temp;
             self.currentOffsetPage  += movedPage;
         }
@@ -386,13 +468,10 @@ typedef struct {
             movedPage ++;
             pageIndex --;
         }
-        if (movedPage > 0) {
+        if (movedPage > 0) {//判断是否有移动页面
             _offsetRatio            = offsetRatio + movedPage;
             self.currentOffsetPage  -= movedPage;
         }
-    }
-    else {
-        
     }
 }
 
