@@ -8,25 +8,42 @@
 
 #import <UIKit/UIKit.h>
 
+//无限环边界状态
+typedef NS_ENUM(NSInteger, InfinityRingEdgeStatus) {
+    InfinityRingEdgeStart,     //触碰到左边界
+    InfinityRingEdgeEnd,       //触碰到右边界
+    InfinityRingEdgeNone,      //中间滑动变换视图位置，没触碰到任何边界
+};
+
+
 @class MDLInfinityRingView;
 
-@protocol MDLGoldRingItemBuilder
-
-- (void)willBuildItem:(MDLInfinityRingView *)infinityRingView;
-
-- (UIView *)buildItemAtIndex:(NSInteger)index infinityRingView:(MDLInfinityRingView *)infinityRingView;
-
-@end
-
 @protocol MDLInfinityRingViewDelegate <NSObject>
+
+- (void)infinityRingView:(MDLInfinityRingView *)infinityRingView displaySubring:(UIView *)subring withSubringIndex:(NSInteger)subringIndex dataIndex:(NSInteger)dataIndex;
+
+- (void)infinityRingView:(MDLInfinityRingView *)infinityRingView scrollWithRatio:(CGFloat)ratio edgeStatus:(InfinityRingEdgeStatus)edgeStatus;
 
 @end
 
 @protocol MDLInfinityRingViewDataSource <NSObject>
 
+/**
+ 创建子环视图
+ @param infinityRingView 无限环视图
+ @param index 子环索引
+ @param frame 显示区域
+ @return 子环视图
+ */
 - (UIView *)infinityRingView:(MDLInfinityRingView *)infinityRingView buildSubringAtIndex:(NSInteger)index withFrame:(CGRect)frame;
 
-- (void)infinityRingView:(MDLInfinityRingView *)infinityRingView updateSubring:(UIView *)view dataIndex:(NSInteger)dataIndex;
+/**
+ 更新子环视图
+ @param infinityRingView 无限环视图
+ @param subring 子环视图
+ @param dataIndex 数据索引
+ */
+- (void)infinityRingView:(MDLInfinityRingView *)infinityRingView updateSubring:(UIView *)subring dataIndex:(NSInteger)dataIndex;
 
 @optional
 
@@ -37,10 +54,21 @@
  */
 - (NSInteger)numberOfSubringInInfinityRingView:(MDLInfinityRingView *)infinityRingView;
 
-//
-- (void)infinityRingView:(MDLInfinityRingView *)infinityRingView willUpdateSubring:(UIView *)view dataIndex:(NSInteger)dataIndex;
+/**
+ 将要更新子环视图时调用
+ @param infinityRingView 无限环视图
+ @param subring 子环视图
+ @param dataIndex 数据索引
+ */
+- (void)infinityRingView:(MDLInfinityRingView *)infinityRingView willUpdateSubring:(UIView *)subring dataIndex:(NSInteger)dataIndex;
 
-- (void)infinityRingView:(MDLInfinityRingView *)infinityRingView didUpdateSubring:(UIView *)view dataIndex:(NSInteger)dataIndex;
+/**
+ 更新完子环视图后调用
+ @param infinityRingView 无限环视图
+ @param subring 子环视图
+ @param dataIndex 数据索引
+ */
+- (void)infinityRingView:(MDLInfinityRingView *)infinityRingView didUpdateSubring:(UIView *)subring dataIndex:(NSInteger)dataIndex;
 
 @end
 

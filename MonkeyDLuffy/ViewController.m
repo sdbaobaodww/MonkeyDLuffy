@@ -96,7 +96,7 @@
 
 - (void)infinityRingView:(MDLInfinityRingView *)infinityRingView updateSubring:(UIView *)view dataIndex:(NSInteger)dataIndex {
 //    [(WKWebView *)view loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://www.baidu.com"]]];
-    ((UILabel *)view).text = [NSString stringWithFormat:@"%ld__%ld",view.tag, dataIndex];
+    ((UILabel *)view).text = [NSString stringWithFormat:@"%ld__%ld",[view performSelector:@selector(md_subringIndex) withObject:nil], dataIndex];
 //    NSLog(@"updateItemView:(%ld,%ld)",itemIndex, dataIndex);
 }
 
