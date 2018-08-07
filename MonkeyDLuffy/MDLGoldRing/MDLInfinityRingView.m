@@ -16,6 +16,7 @@ typedef struct {
     InfinityRingEdgeStatus edgeStatus;//边界状态
 }InfinityRingLocationInfo;
 
+//获取当前显示子环对应的数据索引
 static inline NSInteger RingLocationGetCurrentDateIndex(InfinityRingLocationInfo location) {
     return location.dataIndex + location.pageIndex;
 }
@@ -409,7 +410,7 @@ typedef struct {
     CGRect frame = _scrollView.bounds;
     UIScrollView *scrollView = _scrollView;
     scrollView.delegate = nil;
-    scrollView.contentSize = CGSizeMake(frame.size.width * subringCount, frame.size.height);
+    scrollView.contentSize = CGSizeMake(frame.size.width * subringCount + (subringCount == 1 ? 1. : 0), frame.size.height);//子环为1时增加1的宽度，以便能滑动
     scrollView.contentOffset = CGPointMake(frame.size.width * startLocation.pageIndex, .0);
     scrollView.delegate = self;
     
@@ -504,8 +505,8 @@ typedef struct {
 
 - (void)endScroll:(UIScrollView *)scrollView {
     if (_subringCount > 1 && self.viewInvalidate) {
-        if ([self.delegate respondsToSelector:@selector(infinityRingView:displaySubring:withSubringIndex:dataIndex:)]) {
-            [self.delegate infinityRingView:self displaySubring:_displaySubring withSubringIndex:_displaySubring.md_subringIndex dataIndex:_displaySubring.md_dataIndex];
+        if ([self.delegate respondsToSelector:@selector(infinityRingView:didDisplaySubring:withSubringIndex:dataIndex:)]) {
+            [self.delegate infinityRingView:self didDisplaySubring:_displaySubring withSubringIndex:_displaySubring.md_subringIndex dataIndex:_displaySubring.md_dataIndex];
         }
     }
     self.viewInvalidate             = NO;

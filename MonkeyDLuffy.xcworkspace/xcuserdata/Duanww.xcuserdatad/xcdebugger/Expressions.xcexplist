@@ -3,18 +3,18 @@
    version = "1.0">
    <ContextStates>
       <ContextState
-         contextName = "-[AppDelegate application:didFinishLaunchingWithOptions:]:AppDelegate.m">
+         contextName = "-[MDLInfinityRingView _pageOffsetWithFinalDisplayDataIndex:lastLocation:subringCount:dataCount:]:MDLInfinityRingView.m">
          <PersistentStrings>
             <PersistentString
-               value = "[TestFactory enterCount]">
+               value = "(dataIndex - half - lastLocation.dataIndex)">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "-[MDLIOCTest testAnnotationRegisterBean]:MDLIOCTest.m">
+         contextName = "-[MDLInfinityRingView scrollToDataIndex:]:MDLInfinityRingView.m">
          <PersistentStrings>
             <PersistentString
-               value = "[MDLIOCRegister allRegistedBeans]">
+               value = "[self _pageOffsetWithFinalDisplayDataIndex:dataIndex lastLocation:_ringLocation subringCount:_subringCount dataCount:_dataCount]">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
@@ -28,6 +28,61 @@
       </ContextState>
       <ContextState
          contextName = "+[MDLIOCRegister allRegistedBeans]:MDLIOCInjector.m">
+      </ContextState>
+      <ContextState
+         contextName = "-[MDLGoldRingView scrollViewDidScroll:]:MDLGoldRingView.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "(_currentOffsetPage - 1) * width">
+            </PersistentString>
+            <PersistentString
+               value = "contentOffsetX - _currentOffsetPage * width">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "-[ViewController moveToData]:ViewController.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "(_textField.text ?: _textField.placeholder)">
+            </PersistentString>
+            <PersistentString
+               value = "_textField.text">
+            </PersistentString>
+            <PersistentString
+               value = "_textField.text ?: _textField.placeholder">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "-[AppDelegate application:didFinishLaunchingWithOptions:]:AppDelegate.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "[TestFactory enterCount]">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "-[MDLInfinityRingView _layoutViewWithCurrentPage:pageOffset:]:MDLInfinityRingView.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "(pageOffset &gt; 0 &amp;&amp; i - validDataOffset &lt; 0)">
+            </PersistentString>
+            <PersistentString
+               value = "(pageOffset &lt; 0 &amp;&amp; i + validDataOffset &gt;= subringCount)">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "-[MDLIOCTest testAnnotationRegisterBean]:MDLIOCTest.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "[MDLIOCRegister allRegistedBeans]">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "-[MDLInfinityRingView _finalLocationWithPageOffset:lastLocation:subringCount:dataCount:]:MDLInfinityRingView.m">
       </ContextState>
    </ContextStates>
 </VariablesViewState>

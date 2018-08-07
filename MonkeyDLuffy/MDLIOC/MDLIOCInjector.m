@@ -188,6 +188,20 @@ static inline NSString * factoryNameWithFactory(Class<MDLIOCBeanFactory> factory
     return [self instanceForProtocol:protocol alias:nil];
 }
 
++ (id __nullable)groupInstanceForProtocol:(Protocol * __nonnull)protocol alias:(NSString * __nullable)alias {
+    NSParameterAssert(protocol);
+    
+    __block id obj = nil;
+    mdl_performLocked(^{
+        obj = [iocContext instanceForKey:[MDLIOCBundleBean beanKeyForProtocol:protocol alias:alias] beanBunlde:YES];
+    });
+    return obj;
+}
+
++ (id __nullable)groupInstanceForProtocol:(Protocol * __nonnull)protocol {
+    return [self groupInstanceForProtocol:protocol alias:nil];
+}
+
 @end
 
 @interface NSObject (IOC)

@@ -62,6 +62,7 @@ PODS:
     - PromiseKit/Promise
   - ReactiveObjC (3.0.0)
   - SAMKeychain (1.5.2)
+  - TYCyclePagerView (1.1.0)
   - UITableView+FDTemplateLayoutCell (1.6)
 
 DEPENDENCIES:
@@ -74,6 +75,7 @@ DEPENDENCIES:
   - PromiseKit (~> 1.7.2)
   - ReactiveObjC (~> 3.0.0)
   - SAMKeychain (~> 1.5.2)
+  - TYCyclePagerView
   - UITableView+FDTemplateLayoutCell (~> 1.6)
 
 SPEC CHECKSUMS:
@@ -87,8 +89,9 @@ SPEC CHECKSUMS:
   PromiseKit: 102844c7b5ccff53f693e0710365c445d8df3871
   ReactiveObjC: ce79989e8684b9086b5f8d0c74bc7b81a8729c9e
   SAMKeychain: 1865333198217411f35327e8da61b43de79b635b
+  TYCyclePagerView: b70858c9b5d0e80e1e3129ff5ceb027eb0f76d44
   UITableView+FDTemplateLayoutCell: 5c949b4a5059c404b442926c0e80f81d10a2d66f
 
-PODFILE CHECKSUM: cf39b0071740e687f4e89bdac4913bd8f0cc115f
+PODFILE CHECKSUM: 80db149f4ecea3febe9eb6049e1529886ec4ed94
 
-COCOAPODS: 1.3.0.beta.1
+COCOAPODS: 1.4.0

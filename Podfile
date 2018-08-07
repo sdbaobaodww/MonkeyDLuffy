@@ -13,4 +13,5 @@ target ‘MonkeyDLuffy’ do
     pod 'BeeHive', '~> 1.5.1'
     pod 'UITableView+FDTemplateLayoutCell', '~> 1.6'
     pod 'JKCategories', '~> 1.5'
+    pod 'TYCyclePagerView'
 end

@@ -24,7 +24,7 @@
     [super viewDidLoad];
     
     CGRect frame = self.view.frame;
-    MDLInfinityRingView *ringView = [[MDLInfinityRingView alloc] initWithFrame:CGRectMake(.0, 150., frame.size.width, frame.size.height - 200.) initIndex:5 dataCount:20];
+    MDLInfinityRingView *ringView = [[MDLInfinityRingView alloc] initWithFrame:CGRectMake(.0, 150., frame.size.width, frame.size.height - 200.) initIndex:0 dataCount:1];
     ringView.dataSource = self;
     [self.view addSubview:ringView];
     _ringView = ringView;

@@ -118,6 +118,19 @@
  */
 + (id __nullable)instanceForProtocol:(Protocol * __nonnull)protocol;
 
+/**
+ 获取协议代理对象MDLProtocolProxy，如果传入alias则获取
+ @param protocol 协议
+ @param alias 别名
+ @return 生成的实例
+ */
++ (id __nullable)groupInstanceForProtocol:(Protocol * __nonnull)protocol alias:(NSString * __nullable)alias;
+
+/**
+ @see groupInstanceForProtocol:alias:
+ */
++ (id __nullable)groupInstanceForProtocol:(Protocol * __nonnull)protocol;
+
 @end
 
 #pragma mark - IOC注入

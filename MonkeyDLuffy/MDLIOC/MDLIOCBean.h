@@ -40,6 +40,20 @@ typedef NS_ENUM(NSInteger, MDLIOCCachePolicy) {
 
 @end
 
+@protocol IOCBean
+
+- (Protocol *)protocol;
+- (Class)bindClass;
+- (MDLIOCCachePolicy)cachePolicy;
+- (NSString *)alias;
+- (BOOL)isBundleBean;
+
+- (NSString *)beanKey;
+
++ (NSString *)beanKeyForProtocol:(Protocol *)aProtocol alias:(NSString *)alias;
+
+@end
+
 #pragma mark - IOC Bean
 
 /**
@@ -79,6 +93,13 @@ typedef NS_ENUM(NSInteger, MDLIOCCachePolicy) {
  @return YES为Bean束，否则NO
  */
 - (BOOL)isBundleBean;
+
+@end
+
+/**
+ Bean组
+ */
+@interface MDLIOCBundleBean : MDLIOCBean
 
 @end
 

@@ -20,7 +20,7 @@ typedef NS_ENUM(NSInteger, InfinityRingEdgeStatus) {
 
 @protocol MDLInfinityRingViewDelegate <NSObject>
 
-- (void)infinityRingView:(MDLInfinityRingView *)infinityRingView displaySubring:(UIView *)subring withSubringIndex:(NSInteger)subringIndex dataIndex:(NSInteger)dataIndex;
+- (void)infinityRingView:(MDLInfinityRingView *)infinityRingView didDisplaySubring:(UIView *)subring withSubringIndex:(NSInteger)subringIndex dataIndex:(NSInteger)dataIndex;
 
 - (void)infinityRingView:(MDLInfinityRingView *)infinityRingView scrollWithRatio:(CGFloat)ratio edgeStatus:(InfinityRingEdgeStatus)edgeStatus;
 

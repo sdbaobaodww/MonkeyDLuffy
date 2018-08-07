@@ -31,11 +31,11 @@ BOOL ProtocolIsBundleBean (Protocol *protocol) {
 }
 
 + (instancetype)beanWithProtocol:(Protocol *)aProtocol bindClass:(Class)bindClass cachePolicy:(MDLIOCCachePolicy)cachePolicy alias:(NSString *)alias {
-    return [[MDLIOCBean alloc] initWithProtocol:aProtocol bindClass:bindClass cachePolicy:cachePolicy alias:alias];
+    return [[self alloc] initWithProtocol:aProtocol bindClass:bindClass cachePolicy:cachePolicy alias:alias];
 }
 
 + (instancetype)beanWithProtocol:(Protocol *)aProtocol bindClass:(Class)bindClass {
-    return [[MDLIOCBean alloc] initWithProtocol:aProtocol bindClass:bindClass cachePolicy:MDLIOCCachePolicyNone alias:nil];
+    return [[self alloc] initWithProtocol:aProtocol bindClass:bindClass cachePolicy:MDLIOCCachePolicyNone alias:nil];
 }
 
 - (NSString *)description {
@@ -43,11 +43,11 @@ BOOL ProtocolIsBundleBean (Protocol *protocol) {
 }
 
 - (NSString *)beanKey {
-    return [MDLIOCBean beanKeyForProtocol:self.protocol alias:self.alias];
+    return [[self class] beanKeyForProtocol:self.protocol alias:self.alias];
 }
 
 + (NSString *)beanKeyForProtocol:(Protocol *)aProtocol alias:(NSString *)alias {
-    return alias ? [NSString stringWithFormat:@"%@:%@",NSStringFromProtocol(aProtocol), alias] : NSStringFromProtocol(aProtocol);
+    return [NSString stringWithFormat:@"%@:%@",NSStringFromProtocol(aProtocol), alias ? alias : @""];
 }
 
 - (NSUInteger)hash {
@@ -71,7 +71,19 @@ BOOL ProtocolIsBundleBean (Protocol *protocol) {
 }
 
 - (BOOL)isBundleBean {
-    return ProtocolIsBundleBean(self.protocol);
+    return NO;
+}
+
+@end
+
+@implementation MDLIOCBundleBean
+
+- (BOOL)isBundleBean {
+    return YES;
+}
+
++ (NSString *)beanKeyForProtocol:(Protocol *)aProtocol alias:(NSString *)alias {
+    return [NSString stringWithFormat:@"_G_:%@",NSStringFromProtocol(aProtocol)];
 }
 
 @end
