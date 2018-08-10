@@ -22,7 +22,7 @@
         _impls = [[NSMutableDictionary alloc] init];
         _signatures = CFDictionaryCreateMutable(NULL, 0, NULL, &kCFTypeDictionaryValueCallBacks);
         _classMethods = CFArrayCreateMutable(NULL, 0, NULL);
-        [self methodSignaturesForProtocol:protocol inDictionary:_signatures classMethods:_classMethods];
+        [self _analyzeProtocol:protocol outMethodSignatures:_signatures andClassMethods:_classMethods];
     }
     return self;
 }
@@ -63,13 +63,27 @@
     }
 }
 
-- (void)methodSignaturesForProtocol:(Protocol *)protocol inDictionary:(CFMutableDictionaryRef)cache classMethods:(CFMutableArrayRef)classMethods{
+/**
+ 分析协议(包括所有父协议)，将协议下面所有的方法签名，与类方法信息找出来存入缓存中
+ 
+ @param protocol 需要进行分析的协议
+ @param signatures 保存方法签名数据
+ @param classMethods 保存所有的类方法名字
+ */
+- (void)_analyzeProtocol:(Protocol *)protocol outMethodSignatures:(CFMutableDictionaryRef)signatures andClassMethods:(CFMutableArrayRef)classMethods {
+    
+    /**
+     根据控制参数isRequiredMethod，isInstanceMethod遍历协议下声明的方法，并将MethodSignature数据存入cache，类方法名称存入classMethods
+     
+     @param BOOL isRequiredMethod 是否是必选方法，YES为required，NO为optional
+     @param BOOL isInstanceMethod 是否是实例方法，YES实例方法，NO类方法
+     */
     void (^enumerateRequiredMethods)(BOOL,BOOL) = ^(BOOL isRequiredMethod, BOOL isInstanceMethod) {
         unsigned int methodCount;
         struct objc_method_description *descr = protocol_copyMethodDescriptionList(protocol, isRequiredMethod, isInstanceMethod, &methodCount);
         for (NSUInteger idx = 0; idx < methodCount; idx++) {
             NSMethodSignature *signature = [NSMethodSignature signatureWithObjCTypes:descr[idx].types];
-            CFDictionarySetValue(cache, descr[idx].name, (__bridge const void *)(signature));
+            CFDictionarySetValue(signatures, descr[idx].name, (__bridge const void *)(signature));
             if (!isInstanceMethod) {
                 CFArrayAppendValue(classMethods, descr[idx].name);
             }
@@ -86,7 +100,7 @@
     unsigned int inheritedProtocolCount;
     Protocol *__unsafe_unretained* inheritedProtocols = protocol_copyProtocolList(protocol, &inheritedProtocolCount);
     for (NSUInteger idx = 0; idx < inheritedProtocolCount; idx++) {
-        [self methodSignaturesForProtocol:inheritedProtocols[idx] inDictionary:cache classMethods:classMethods];
+        [self _analyzeProtocol:inheritedProtocols[idx] outMethodSignatures:signatures andClassMethods:classMethods];
     }
     free(inheritedProtocols);
 }

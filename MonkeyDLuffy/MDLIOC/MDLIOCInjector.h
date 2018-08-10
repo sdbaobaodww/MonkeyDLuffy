@@ -136,12 +136,22 @@
 @end
 
 /**
- 依赖注入快分类
+ 依赖对象注入分类
  */
 @interface NSObject (MDLIOCInjector)
 
 //调用此方法进行依赖对象注入，需实现MDLInjectable协议
 - (void)mdlioc_injector;
+
+@end
+
+/**
+ Bean注册分类
+ */
+@interface NSObject (MDLIOCRegister)
+
+//调用此方法进行Bean注册，类必须实现且仅实现唯一协议，实现多协议时不可使用该方法
++ (void)mdlioc_register;
 
 @end
 

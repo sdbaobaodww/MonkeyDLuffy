@@ -66,7 +66,7 @@ static inline NSString * factoryNameWithFactory(Class<MDLIOCBeanFactory> factory
  */
 + (void)_addBeans:(NSArray *)beans forFactoryName:(NSString *)factoryName {
     NSMutableArray *beansOfFactory = [factoryBeans objectForKey:factoryName];//工厂下面的Bean
-    if (!beansOfFactory) {
+    if (!beansOfFactory) {//工程对应的beans数组不存在，则创建新的数组保存传入的beans
         beansOfFactory = [NSMutableArray array];
         factoryBeans[factoryName] = beansOfFactory;
     }
@@ -192,18 +192,18 @@ static inline NSString * factoryNameWithFactory(Class<MDLIOCBeanFactory> factory
 
 @interface NSObject (IOC)
 
-@property (nonatomic, assign) BOOL isInjected;//对象是否已经注入了依赖对象
+@property (nonatomic, assign) BOOL ioc_isInjected;//对象是否已经注入了依赖对象
 
 @end
 
 @implementation NSObject (IOC)
 
-- (BOOL)isInjected {
+- (BOOL)ioc_isInjected {
     return [objc_getAssociatedObject(self, _cmd) boolValue];
 }
 
-- (void)setIsInjected:(BOOL)isInjected {
-    objc_setAssociatedObject(self, @selector(isInjected), [NSNumber numberWithBool:isInjected], OBJC_ASSOCIATION_RETAIN);
+- (void)setIoc_isInjected:(BOOL)ioc_isInjected {
+    objc_setAssociatedObject(self, @selector(ioc_isInjected), [NSNumber numberWithBool:ioc_isInjected], OBJC_ASSOCIATION_RETAIN);
 }
 
 @end
@@ -214,21 +214,25 @@ static inline NSString * factoryNameWithFactory(Class<MDLIOCBeanFactory> factory
     Class clazz = [obj class];
     if ([clazz respondsToSelector:@selector(mdlioc_injectableProperties)]) {
         mdl_performLocked(^{
-            if (obj.isInjected) {//不进行重复注入
+            if (obj.ioc_isInjected) {//不进行重复注入
                 return;
             }
             
             NSSet *properties = [clazz mdlioc_injectableProperties];//需要注入的属性集合
             NSMutableDictionary *propertiesDictionary = [NSMutableDictionary dictionaryWithCapacity:properties.count];//保存KVC数据字典
             for (NSString *propertyName in properties) {
-                //获取属性对应的协议
-                Protocol *protocol = NSProtocolFromString([self _getClassOrProtocolForProperty:class_getProperty(clazz, (const char *)[propertyName UTF8String])]);
+                //获取属性的协议名称
+                NSString *protocolString = [self _getClassOrProtocolForProperty:class_getProperty(clazz, (const char *)[propertyName UTF8String])];
+                if ([protocolString containsString:@"><"]) {//不支持多协议属性
+                    [NSException raise:@"Parameter Error" format:@"multiple protocol %@ unsupported", protocolString];
+                }
+                Protocol *protocol = NSProtocolFromString(protocolString);
                 //根据协议Key获取对应的实例
                 propertiesDictionary[propertyName] = [iocContext instanceForKey:[MDLIOCBean beanKeyForProtocol:protocol alias:nil] beanBunlde:ProtocolIsBundleBean(protocol)];
             }
             [obj setValuesForKeysWithDictionary:propertiesDictionary];//KVC设置属性值
             
-            obj.isInjected = YES;
+            obj.ioc_isInjected = YES;
         });
     }
 }
@@ -261,9 +265,24 @@ static inline NSString * factoryNameWithFactory(Class<MDLIOCBeanFactory> factory
 
 - (void)mdlioc_injector {
     if (![self respondsToSelector:@selector(mdlioc_injectableProperties)]) {
-        @throw [NSException exceptionWithName:@"MDLIOCInjectorException" reason:@"object must conforms protocol MDLInjectable!" userInfo:nil];
+        @throw [NSException exceptionWithName:@"ioc注入错误" reason:@"被注入类需实现MDLInjectable协议！" userInfo:nil];
     }
     [MDLIOCInjector injector:(NSObject<MDLInjectable> *)self];
+}
+
+@end
+
+@implementation NSObject (MDLIOCRegister)
+
++ (void)mdlioc_register {
+    unsigned int protocolCount = 0;
+    Protocol * __unsafe_unretained * protocols = class_copyProtocolList(self, &protocolCount);
+    if (protocolCount == 1) {
+        Protocol *protocol = protocols[0];
+        [MDLIOCRegister registerProtocol:protocol clazz:self];
+    } else {
+        @throw [NSException exceptionWithName:@"ioc注册错误" reason:@"此方法适用于注册仅实现单一协议的类！" userInfo:nil];
+    }
 }
 
 @end
