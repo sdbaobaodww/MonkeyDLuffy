@@ -15,19 +15,27 @@ typedef NS_ENUM(NSInteger, InfinityRingEdgeStatus) {
     InfinityRingEdgeNone,      //中间滑动变换视图位置，没触碰到任何边界
 };
 
-@interface UIView (InfinityRing)
-
-@property (nonatomic, assign) NSInteger md_dataIndex;//记录数据索引
-@property (nonatomic, assign) NSInteger md_subringIndex;//记录子环索引
-
-@end
-
 @class MDLInfinityRingView;
 
 @protocol MDLInfinityRingViewDelegate <NSObject>
 
+/**
+ 子环显示的回调方法
+
+ @param infinityRingView 无限环视图
+ @param subring 子环视图
+ @param subringIndex 子环索引
+ @param dataIndex 数据索引
+ */
 - (void)infinityRingView:(MDLInfinityRingView *)infinityRingView displaySubring:(UIView *)subring withSubringIndex:(NSInteger)subringIndex dataIndex:(NSInteger)dataIndex;
 
+/**
+ 无限环视图滑动的回调
+ 
+ @param infinityRingView 无限环视图
+ @param ratio 滑动比例
+ @param edgeStatus 边界状态
+ */
 - (void)infinityRingView:(MDLInfinityRingView *)infinityRingView scrollWithRatio:(CGFloat)ratio edgeStatus:(InfinityRingEdgeStatus)edgeStatus;
 
 @end
@@ -47,9 +55,10 @@ typedef NS_ENUM(NSInteger, InfinityRingEdgeStatus) {
  更新子环视图
  @param infinityRingView 无限环视图
  @param subring 子环视图
+ @param subringIndex 子环索引
  @param dataIndex 数据索引
  */
-- (void)infinityRingView:(MDLInfinityRingView *)infinityRingView updateSubring:(UIView *)subring dataIndex:(NSInteger)dataIndex;
+- (void)infinityRingView:(MDLInfinityRingView *)infinityRingView updateSubring:(UIView *)subring withSubringIndex:(NSInteger)subringIndex dataIndex:(NSInteger)dataIndex;
 
 @optional
 
@@ -64,17 +73,19 @@ typedef NS_ENUM(NSInteger, InfinityRingEdgeStatus) {
  将要更新子环视图时调用
  @param infinityRingView 无限环视图
  @param subring 子环视图
+ @param subringIndex 子环索引
  @param dataIndex 数据索引
  */
-- (void)infinityRingView:(MDLInfinityRingView *)infinityRingView willUpdateSubring:(UIView *)subring dataIndex:(NSInteger)dataIndex;
+- (void)infinityRingView:(MDLInfinityRingView *)infinityRingView willUpdateSubring:(UIView *)subring withSubringIndex:(NSInteger)subringIndex dataIndex:(NSInteger)dataIndex;
 
 /**
  更新完子环视图后调用
  @param infinityRingView 无限环视图
  @param subring 子环视图
+ @param subringIndex 子环索引
  @param dataIndex 数据索引
  */
-- (void)infinityRingView:(MDLInfinityRingView *)infinityRingView didUpdateSubring:(UIView *)subring dataIndex:(NSInteger)dataIndex;
+- (void)infinityRingView:(MDLInfinityRingView *)infinityRingView didUpdateSubring:(UIView *)subring withSubringIndex:(NSInteger)subringIndex dataIndex:(NSInteger)dataIndex;
 
 @end
 
@@ -83,20 +94,21 @@ typedef NS_ENUM(NSInteger, InfinityRingEdgeStatus) {
  */
 @interface MDLInfinityRingView : UIView
 
+/**滚动视图*/
 @property (nonatomic, strong, readonly) UIScrollView *scrollView;
-
+/**委托*/
 @property (nonatomic, weak) id<MDLInfinityRingViewDelegate> delegate;
-
+/**数据源*/
 @property (nonatomic, weak) id<MDLInfinityRingViewDataSource> dataSource;
 
 /**
  无限环视图初始化方法
  @param frame 视图显示区域
- @param initIndex 进入时的数据的位置
+ @param initDataIndex 进入时的数据的位置
  @param dataCount 数据总个数
  @return 无限环视图
  */
-- (instancetype)initWithFrame:(CGRect)frame initIndex:(NSInteger)initIndex dataCount:(NSInteger)dataCount;
+- (instancetype)initWithFrame:(CGRect)frame initDataIndex:(NSInteger)initDataIndex dataCount:(NSInteger)dataCount;
 
 /**
  滑动到指定数据索引处
