@@ -184,14 +184,23 @@ typedef struct {
 
 - (void)setDataSource:(id<MDLInfinityRingViewDataSource>)dataSource {
     _dataSource = dataSource;
+    InfinityRingDataSourceFlag flag = (InfinityRingDataSourceFlag){NO, NO, NO};
     if ([dataSource respondsToSelector:@selector(infinityRingView:willUpdateSubring:withSubringIndex:dataIndex:)]) {
-        _dataSourceFlag.hasWillUpdateImpl = YES;
+        flag.hasWillUpdateImpl = YES;
     }
     if ([dataSource respondsToSelector:@selector(infinityRingView:didUpdateSubring:withSubringIndex:dataIndex:)]) {
-        _dataSourceFlag.hasDidUpdateImpl = YES;
+        flag.hasDidUpdateImpl = YES;
     }
     if ([dataSource respondsToSelector:@selector(numberOfSubringInInfinityRingView:)]) {
-        _dataSourceFlag.hasNumberOfSubringImpl = YES;
+        flag.hasNumberOfSubringImpl = YES;
+    }
+    _dataSourceFlag = flag;
+    
+    if (self.superview) {//切换数据源
+        [_subrings makeObjectsPerformSelector:@selector(removeFromSuperview)];
+        _displaySubring = nil;
+        _ringLocation = (InfinityRingLocationInfo){0, 0, 0};
+        [self _setupInfinityRingView];
     }
 }
 
