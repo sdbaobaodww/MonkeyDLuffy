@@ -37,13 +37,6 @@ typedef struct {
 
 #define kRatioLimit .999
 
-@interface UIView (InfinityRing)
-
-@property (nonatomic, assign) NSInteger md_dataIndex;//记录数据索引
-@property (nonatomic, assign) NSInteger md_subringIndex;//记录子环索引
-
-@end
-
 @implementation UIView (InfinityRing)
 
 - (NSInteger)md_dataIndex {
@@ -171,7 +164,12 @@ typedef struct {
     if ([dataSource respondsToSelector:@selector(numberOfSubringInInfinityRingView:)]) {
         _dataSourceFlag.hasNumberOfSubringImpl = YES;
     }
-    [self _setupInfinityRingView];
+}
+
+- (void)willMoveToSuperview:(UIView *)newSuperview {
+    if (newSuperview) {
+        [self _setupInfinityRingView];
+    }
 }
 
 - (void)setCurrentOffsetPage:(NSInteger)currentOffsetPage {
@@ -210,10 +208,9 @@ typedef struct {
                              return;
                          }
                          [self _layoutViewWithCurrentPage:_currentOffsetPage pageOffset:pageOffset];
+                         self.viewInvalidate = YES;
+                         [self didEndScroll];
                      }];
-    
-//    self.viewInvalidate = YES;
-//    [self _layoutViewWithCurrentPage:_currentOffsetPage pageOffset:pageOffset];
 }
 
 #pragma mark - Private
@@ -248,17 +245,18 @@ typedef struct {
     _currentOffsetPage = finalLocation.pageIndex;
     
     _scrollView.delegate = nil;
-    if (finalLocation.edgeStatus == InfinityRingEdgeNone) {
+    if (finalLocation.edgeStatus == InfinityRingEdgeNone) {//中间滑动
         CGFloat compensateOffset = finalLocation.pageIndex == lastLocation.pageIndex ? frame.size.width * _offsetRatio : 0;//视图位置调整时补偿的偏移
         _scrollView.contentOffset = CGPointMake(frame.size.width * finalLocation.pageIndex + compensateOffset, .0);
-    } else {
+    } else {//边界滑动
         _scrollView.contentOffset = CGPointMake(frame.size.width * finalLocation.pageIndex, .0);
     }
     _scrollView.delegate = self;
     
-    //数据位移
-    NSInteger validDataOffset = finalLocation.dataIndex - lastLocation.dataIndex;
-    if (validDataOffset == 0) {
+    NSInteger validDataOffset = finalLocation.dataIndex - lastLocation.dataIndex;//数据位移
+    if (validDataOffset == 0) {//数据位移为0，边界情况，滑到最左边或者滑到最右边
+        _displaySubring = _subrings[finalLocation.pageIndex];
+        [self didEndScroll];
         return;
     }
     
@@ -276,7 +274,7 @@ typedef struct {
         InfinitySubringLocation subringLocation = [self _subringLocationWithIndex:i pageOffset:validDataOffset subringCount:subringCount];//移动后子环的位置
         subringView.frame = CGRectMake(frame.size.width * subringLocation.finalPageIndex, .0, frame.size.width, frame.size.height);
         [adjustedSubrings replaceObjectAtIndex:subringLocation.finalPageIndex withObject:subringView];
-        if (subringLocation.finalPageIndex == finalLocation.pageIndex) {
+        if (subringLocation.finalPageIndex == finalLocation.pageIndex) {//判断是或否是当前需要显示的子环
             displaySubring = subringView;
         }
         
@@ -288,18 +286,8 @@ typedef struct {
     _subrings = adjustedSubrings;
     _displaySubring = displaySubring;
     
-    if ([compensateSubrings count] <= 0) {
-        return;
-    }
-    printf("---------------------------------\n");
-    //优先更新正在显示的子环
-    if (displaySubring) {
-        [self _updateSubringView:displaySubring withDateIndex:displaySubring.md_dataIndex flag:flag];
-    }
     for (UIView *subringView in compensateSubrings) {//需要更新的子环界面
-        if (subringView != displaySubring) {
-            [self _updateSubringView:subringView withDateIndex:subringView.md_dataIndex flag:flag];
-        }
+        [self _updateSubringView:subringView withDateIndex:subringView.md_dataIndex flag:flag];
     }
 }
 
@@ -311,7 +299,12 @@ typedef struct {
     if (flag.hasDidUpdateImpl) {
         [self.dataSource infinityRingView:self didUpdateSubring:subringView dataIndex:dataIndex];
     }
-    printf("更新子环数据:%ld \n", dataIndex);
+}
+
+- (void)_displaySubringView:(UIView *)subringView withSubringIndex:(NSInteger)subringIndex dateIndex:(NSInteger)dataIndex {
+    if ([self.delegate respondsToSelector:@selector(infinityRingView:displaySubring:withSubringIndex:dataIndex:)]) {
+        [self.delegate infinityRingView:self displaySubring:subringView withSubringIndex:subringIndex dataIndex:dataIndex];
+    }
 }
 
 - (InfinityRingLocationInfo)_initLocationWithSubringCount:(NSInteger)subringCount initIndex:(NSInteger)initIndex dataCount:(NSInteger)dataCount {
@@ -416,8 +409,14 @@ typedef struct {
     NSInteger dataIndex = 0;
     for (int i = 0; i < subringCount; i ++) {
         UIView *subringView = [dataSource infinityRingView:self buildSubringAtIndex:i withFrame:CGRectMake(frame.size.width * i, .0, frame.size.width, frame.size.height)];
-        subringView.md_subringIndex = i;
+        
         dataIndex = startLocation.dataIndex + i;
+        subringView.md_subringIndex = i;
+        subringView.md_dataIndex = dataIndex;
+        
+        if (startLocation.pageIndex == i) {//判断是或否是当前需要显示的子环
+            _displaySubring = subringView;
+        }
         
         [self _updateSubringView:subringView withDateIndex:dataIndex flag:flag];
         
@@ -425,6 +424,8 @@ typedef struct {
         [subrings addObject:subringView];
     }
     _subrings = subrings;
+    
+    [self _displaySubringView:_displaySubring withSubringIndex:_displaySubring.md_subringIndex dateIndex:_displaySubring.md_dataIndex];
 }
 
 - (NSInteger)_pageOffsetWithFinalDisplayDataIndex:(NSInteger)dataIndex lastLocation:(InfinityRingLocationInfo)lastLocation subringCount:(NSInteger)subringCount dataCount:(NSInteger)dataCount{
@@ -460,12 +461,12 @@ typedef struct {
 
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
     if (decelerate == NO) {
-        [self endScroll:scrollView];
+        [self didEndScroll];
     }
 }
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
-    [self endScroll:scrollView];
+    [self didEndScroll];
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
@@ -502,11 +503,9 @@ typedef struct {
     }
 }
 
-- (void)endScroll:(UIScrollView *)scrollView {
+- (void)didEndScroll {
     if (_subringCount > 1 && self.viewInvalidate) {
-        if ([self.delegate respondsToSelector:@selector(infinityRingView:displaySubring:withSubringIndex:dataIndex:)]) {
-            [self.delegate infinityRingView:self displaySubring:_displaySubring withSubringIndex:_displaySubring.md_subringIndex dataIndex:_displaySubring.md_dataIndex];
-        }
+        [self _displaySubringView:_displaySubring withSubringIndex:_displaySubring.md_subringIndex dateIndex:_displaySubring.md_dataIndex];
     }
     self.viewInvalidate             = NO;
 }

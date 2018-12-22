@@ -15,6 +15,12 @@ typedef NS_ENUM(NSInteger, InfinityRingEdgeStatus) {
     InfinityRingEdgeNone,      //中间滑动变换视图位置，没触碰到任何边界
 };
 
+@interface UIView (InfinityRing)
+
+@property (nonatomic, assign) NSInteger md_dataIndex;//记录数据索引
+@property (nonatomic, assign) NSInteger md_subringIndex;//记录子环索引
+
+@end
 
 @class MDLInfinityRingView;
 
