@@ -322,6 +322,7 @@ typedef struct {
         return;
     }
     _scrollView.frame = self.bounds;
+    _scrollView.contentSize = CGSizeMake(size.width * _subringCount, size.height);
     UIView *subringView = nil;
     
     for (int i = 0; i < _subringCount; i ++) {
@@ -362,14 +363,14 @@ typedef struct {
     CGRect frame = _scrollView.bounds;
     _currentOffsetPage = finalLocation.pageIndex;
     
-    _scrollView.delegate = nil;
-    if (finalLocation.edgeStatus == InfinityRingEdgeNone) {//中间滑动
-        CGFloat compensateOffset = finalLocation.pageIndex == lastLocation.pageIndex ? frame.size.width * _offsetRatio : 0;//视图位置调整时补偿的偏移
-        _scrollView.contentOffset = CGPointMake(frame.size.width * finalLocation.pageIndex + compensateOffset, .0);
-    } else {//边界滑动
-        _scrollView.contentOffset = CGPointMake(frame.size.width * finalLocation.pageIndex, .0);
-    }
-    _scrollView.delegate = self;
+//    _scrollView.delegate = nil;
+//    if (finalLocation.edgeStatus == InfinityRingEdgeNone) {//中间滑动
+//        CGFloat compensateOffset = finalLocation.pageIndex == lastLocation.pageIndex ? frame.size.width * _offsetRatio : 0;//视图位置调整时补偿的偏移
+//        _scrollView.contentOffset = CGPointMake(frame.size.width * finalLocation.pageIndex + compensateOffset, .0);
+//    } else {//边界滑动
+//        _scrollView.contentOffset = CGPointMake(frame.size.width * finalLocation.pageIndex, .0);
+//    }
+//    _scrollView.delegate = self;
     
     NSInteger validDataOffset = finalLocation.dataIndex - lastLocation.dataIndex;//数据位移
     if (validDataOffset == 0) {//数据位移为0，边界情况，滑到最左边或者滑到最右边
@@ -403,6 +404,11 @@ typedef struct {
     }
     _subrings = adjustedSubrings;
     _displaySubring = displaySubring;
+    
+    _scrollView.delegate = nil;
+    CGFloat compensateOffset = finalLocation.pageIndex == lastLocation.pageIndex ? frame.size.width * _offsetRatio : 0;//视图位置调整时补偿的偏移
+    _scrollView.contentOffset = CGPointMake(frame.size.width * finalLocation.pageIndex + compensateOffset, .0);
+    _scrollView.delegate = self;
     
     for (UIView *subringView in compensateSubrings) {//需要更新的子环界面
         [self _updateSubringView:subringView withSubringIndex:subringView.md_subringIndex dateIndex:subringView.md_dataIndex flag:flag];
