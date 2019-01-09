@@ -114,9 +114,9 @@
 		4A8E8EA81F3C0AF3006E5953 /* MDLModuleLifecycle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MDLModuleLifecycle.h; sourceTree = "<group>"; };
 		4AA115591F735A2800EC9184 /* SKBounceAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SKBounceAnimation.h; sourceTree = "<group>"; };
 		4AA1155A1F735A2800EC9184 /* SKBounceAnimation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SKBounceAnimation.m; sourceTree = "<group>"; };
-		7510BE5F698255A660C3F289 /* Pods-MonkeyDLuffy.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MonkeyDLuffy.release.xcconfig"; path = "Pods/Target Support Files/Pods-MonkeyDLuffy/Pods-MonkeyDLuffy.release.xcconfig"; sourceTree = "<group>"; };
+		84880E04BBDC1C3B3AD700B9 /* Pods-MonkeyDLuffy.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MonkeyDLuffy.release.xcconfig"; path = "Pods/Target Support Files/Pods-MonkeyDLuffy/Pods-MonkeyDLuffy.release.xcconfig"; sourceTree = "<group>"; };
 		AA11EEA08302D1BBC706DDB8 /* Pods_MonkeyDLuffy.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MonkeyDLuffy.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		C5C5C706FEB9A9A2D0A012D0 /* Pods-MonkeyDLuffy.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MonkeyDLuffy.debug.xcconfig"; path = "Pods/Target Support Files/Pods-MonkeyDLuffy/Pods-MonkeyDLuffy.debug.xcconfig"; sourceTree = "<group>"; };
+		AA90397FA69D2413A161702F /* Pods-MonkeyDLuffy.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MonkeyDLuffy.debug.xcconfig"; path = "Pods/Target Support Files/Pods-MonkeyDLuffy/Pods-MonkeyDLuffy.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -312,8 +312,8 @@
 		FBC1D4B563EB5A0A334A54BF /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				C5C5C706FEB9A9A2D0A012D0 /* Pods-MonkeyDLuffy.debug.xcconfig */,
-				7510BE5F698255A660C3F289 /* Pods-MonkeyDLuffy.release.xcconfig */,
+				AA90397FA69D2413A161702F /* Pods-MonkeyDLuffy.debug.xcconfig */,
+				84880E04BBDC1C3B3AD700B9 /* Pods-MonkeyDLuffy.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -331,7 +331,6 @@
 				4A8E8E6E1F3C084E006E5953 /* Resources */,
 				4AF0BD981F50201500FD7C96 /* Embed Frameworks */,
 				31DFA370B9C2C983D06AC9B0 /* [CP] Embed Pods Frameworks */,
-				E3F27F31716F2AEEF9254129 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -389,7 +388,7 @@
 				TargetAttributes = {
 					4A8E8E6F1F3C084E006E5953 = {
 						CreatedOnToolsVersion = 8.3.3;
-						DevelopmentTeam = 59B8QAXTFE;
+						DevelopmentTeam = R48Q5YKW7M;
 						ProvisioningStyle = Automatic;
 					};
 					4A8E8E881F3C084E006E5953 = {
@@ -504,21 +503,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-MonkeyDLuffy/Pods-MonkeyDLuffy-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		E3F27F31716F2AEEF9254129 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-MonkeyDLuffy/Pods-MonkeyDLuffy-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -700,33 +684,38 @@
 		};
 		4A8E8E9E1F3C084E006E5953 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = C5C5C706FEB9A9A2D0A012D0 /* Pods-MonkeyDLuffy.debug.xcconfig */;
+			baseConfigurationReference = AA90397FA69D2413A161702F /* Pods-MonkeyDLuffy.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = 59B8QAXTFE;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = R48Q5YKW7M;
 				INFOPLIST_FILE = MonkeyDLuffy/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.gw.MonkeyDLuffy;
+				PRODUCT_BUNDLE_IDENTIFIER = com.facishare2.iphone111;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 			};
 			name = Debug;
 		};
 		4A8E8E9F1F3C084E006E5953 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7510BE5F698255A660C3F289 /* Pods-MonkeyDLuffy.release.xcconfig */;
+			baseConfigurationReference = 84880E04BBDC1C3B3AD700B9 /* Pods-MonkeyDLuffy.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = 59B8QAXTFE;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = R48Q5YKW7M;
 				INFOPLIST_FILE = MonkeyDLuffy/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.gw.MonkeyDLuffy;
+				PRODUCT_BUNDLE_IDENTIFIER = com.facishare2.iphone111;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 			};
 			name = Release;
 		};
 		4A8E8EA11F3C084E006E5953 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = C5C5C706FEB9A9A2D0A012D0 /* Pods-MonkeyDLuffy.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				DEVELOPMENT_TEAM = 59B8QAXTFE;
@@ -740,7 +729,6 @@
 		};
 		4A8E8EA21F3C084E006E5953 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7510BE5F698255A660C3F289 /* Pods-MonkeyDLuffy.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				DEVELOPMENT_TEAM = 59B8QAXTFE;

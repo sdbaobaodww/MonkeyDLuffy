@@ -11,7 +11,7 @@
 #import "MDLInfinityRingView.h"
 #import <WebKit/WebKit.h>
 
-@interface ViewController ()<MDLInfinityRingViewDataSource>
+@interface ViewController ()<MDLInfinityRingViewDataSource, MDLInfinityRingViewDelegate>
 
 @end
 
@@ -24,8 +24,9 @@
     [super viewDidLoad];
     
     CGRect frame = self.view.frame;
-    MDLInfinityRingView *ringView = [[MDLInfinityRingView alloc] initWithFrame:CGRectMake(.0, 150., frame.size.width, frame.size.height - 200.) initIndex:5 dataCount:20];
+    MDLInfinityRingView *ringView = [[MDLInfinityRingView alloc] initWithFrame:CGRectMake(.0, 150., frame.size.width, frame.size.height - 200.) initDataIndex:5 dataCount:20];
     ringView.dataSource = self;
+    ringView.delegate = self;
     [self.view addSubview:ringView];
     _ringView = ringView;
     
@@ -60,7 +61,7 @@
 
 - (void)moveToData {
     NSInteger page = [[_textField.text length] > 0 ? _textField.text : _textField.placeholder integerValue];
-    [_ringView scrollToDataIndex:page];
+    [_ringView scrollToDataIndex:page animated:YES];
 }
 
 - (void)tapBtn {
@@ -78,26 +79,45 @@
 }
 
 - (NSInteger)numberOfItemsInInfinityRingView:(MDLInfinityRingView *)infinityRingView {
-    return 7;
+    return 3;
 }
 
-- (UIView *)infinityRingView:(MDLInfinityRingView *)infinityRingView buildSubringAtIndex:(NSInteger)index withFrame:(CGRect)frame {
-//    WKWebView *webView = [[WKWebView alloc] initWithFrame:frame];
-//    webView.backgroundColor = [UIColor grayColor];
-//    return webView;
-    UILabel *label = [[UILabel alloc] initWithFrame:frame];
-    label.layer.borderColor = [UIColor redColor].CGColor;
-    label.layer.borderWidth = 1.;
-    label.backgroundColor = [UIColor grayColor];
+- (UIView *)infinityRingView:(MDLInfinityRingView *)infinityRingView buildSubringAtIndex:(NSInteger)index {
+    UIView *v = [[UIView alloc] initWithFrame:CGRectZero];
+    v.layer.borderColor = [UIColor redColor].CGColor;
+    v.layer.borderWidth = 1.;
+    v.backgroundColor = [UIColor grayColor];
+    
+    UILabel *label = [[UILabel alloc] initWithFrame:v.bounds];
     label.font = [UIFont boldSystemFontOfSize:32];
     label.textAlignment = NSTextAlignmentCenter;
-    return label;
+    label.tag = 11111;
+    [v addSubview:label];
+    return v;
 }
 
-- (void)infinityRingView:(MDLInfinityRingView *)infinityRingView updateSubring:(UIView *)view dataIndex:(NSInteger)dataIndex {
+- (void)infinityRingView:(MDLInfinityRingView *)infinityRingView
+           updateSubring:(UIView *)subring
+        withSubringIndex:(NSInteger)subringIndex
+               dataIndex:(NSInteger)dataIndex {
 //    [(WKWebView *)view loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://www.baidu.com"]]];
-    ((UILabel *)view).text = [NSString stringWithFormat:@"%ld__%ld",[view performSelector:@selector(md_subringIndex) withObject:nil], dataIndex];
-//    NSLog(@"updateItemView:(%ld,%ld)",itemIndex, dataIndex);
+    UILabel *label = [subring viewWithTag:11111];
+    label.text = [NSString stringWithFormat:@"%ld__%ld", subringIndex, dataIndex];
+    NSLog(@"更新子环数据:%ld  %ld", subringIndex, dataIndex);
+}
+
+- (void)infinityRingView:(MDLInfinityRingView *)infinityRingView
+             hideSubring:(UIView *)subring
+        withSubringIndex:(NSInteger)subringIndex
+               dataIndex:(NSInteger)dataIndex {
+    NSLog(@"隐藏子环:%ld  %ld", subringIndex, dataIndex);
+}
+
+- (void)infinityRingView:(MDLInfinityRingView *)infinityRingView
+          displaySubring:(UIView *)subring
+        withSubringIndex:(NSInteger)subringIndex
+               dataIndex:(NSInteger)dataIndex {
+    NSLog(@"显示子环:%ld  %ld", subringIndex, dataIndex);
 }
 
 @end
